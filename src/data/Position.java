@@ -14,6 +14,10 @@ public class Position {
         this.stone = stone;
     }
 
+    public Stone getStone(){
+        return stone;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
