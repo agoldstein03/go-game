@@ -14,6 +14,10 @@ public class Position {
         this.stone = stone;
     }
 
+    public String toString() {
+        return String.format("%s at (%d, %d)", stone, x, y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

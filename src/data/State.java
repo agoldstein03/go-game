@@ -1,43 +1,37 @@
 package data;
 
+import data.exceptions.PlacementOutOfBoundsException;
+
 import java.util.ArrayList;
 
 public class State {
 
+    public final Game game;
     public final int size;
     private final Position[][] board;
-    public final boolean humanIsWhite;
-    public final int blackCaptures;
+    public final Player currentPlayer;
     public final int whiteCaptures;
-    public final boolean blackPass;
+    public final int blackCaptures;
     public final boolean whitePass;
+    public final boolean blackPass;
 
-    public final Stone humanStone;
-    public final Stone computerStone;
-
-
-    public State() {
-        this(19, true);
+    public State(Game game) {
+        this(game, game.whitePlayer, 0, 0, false, false);
     }
 
-    public State(int size, boolean humanIsWhite) {
-        this(size, humanIsWhite, 0, 0, false, false);
+    public State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
+        this(game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, true);
     }
 
-    public State(int size, boolean humanIsWhite, int blackCaptures, int whiteCaptures, boolean blackPass, boolean whitePass) {
-        this(size, humanIsWhite, blackCaptures, whiteCaptures, blackPass, whitePass, true);
-    }
-
-    private State(int size, boolean humanIsWhite, int blackCaptures, int whiteCaptures, boolean blackPass, boolean whitePass, boolean initToNone) {
-        this.size = size;
+    private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
+        this.game = game;
+        this.size = game.size;
         this.board = new Position[size][size];
-        this.blackCaptures = blackCaptures;
+        this.currentPlayer = currentPlayer;
         this.whiteCaptures = whiteCaptures;
-        this.blackPass = blackPass;
+        this.blackCaptures = blackCaptures;
         this.whitePass = whitePass;
-        this.humanIsWhite = humanIsWhite;
-        this.humanStone = humanIsWhite ? Stone.WHITE : Stone.BLACK;
-        this.computerStone = humanIsWhite ? Stone.BLACK : Stone.WHITE;
+        this.blackPass = blackPass;
         if (initToNone) {
             for (int x = 0; x < size; x++) {
                 for (int y = 0; y < size; y++) {
@@ -48,7 +42,15 @@ public class State {
     }
 
     public State(State oldBoard) {
-        this(oldBoard.size, oldBoard.humanIsWhite, oldBoard.blackCaptures, oldBoard.whiteCaptures, oldBoard.blackPass, oldBoard.whitePass, false);
+        this(oldBoard, oldBoard.currentPlayer, oldBoard.whiteCaptures, oldBoard.blackCaptures, oldBoard.whitePass, oldBoard.blackPass);
+    }
+
+    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
+        this(oldBoard, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, false);
+    }
+
+    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
+        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToNone);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 board[x][y] = oldBoard.getPosition(x, y);
@@ -65,24 +67,24 @@ public class State {
         }
     }
 
-    public State stateWithSetPosition(Position position) {
+    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException {
         return stateWithSetPosition(position.x, position.y, position.stone);
     }
 
-    public State stateWithSetPosition(int x, int y, Stone stone) {
-        if (x < 0) {
-            throw new IllegalArgumentException("x ("+x+") is less than 0");
-        } else if (x >= size) {
-            throw new IllegalArgumentException("x ("+x+") is greater/equal to the size ("+size+")");
-        }else if (y < 0) {
-            throw new IllegalArgumentException("y ("+y+") is less than 0");
-        } else if (y >= size) {
-            throw new IllegalArgumentException("y ("+y+") is greater/equal to the size ("+size+")");
-        } else {
-            State newBoard = new State(this);
-            newBoard.setPosition(x, y, stone);
-            return newBoard;
-        }
+    public State stateWithSetPosition(Position position, boolean advanceTurn) throws PlacementOutOfBoundsException {
+        return stateWithSetPosition(position.x, position.y, position.stone, advanceTurn);
+    }
+
+    public State stateWithSetPosition(int x, int y, Stone stone) throws PlacementOutOfBoundsException {
+        return stateWithSetPosition(x, y, stone, true);
+    }
+
+    public State stateWithSetPosition(int x, int y, Stone stone, boolean advanceTurn) throws PlacementOutOfBoundsException {
+        PlacementOutOfBoundsException.assertValid(x, y, size);
+        State newBoard = new State(this, advanceTurn ? currentPlayer : (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer),
+                whiteCaptures, blackCaptures, whitePass, blackPass);
+        newBoard.setPosition(x, y, stone);
+        return newBoard;
     }
 
     private void setPosition(int x, int y, Stone stone) {

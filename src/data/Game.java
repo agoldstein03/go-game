@@ -4,24 +4,24 @@ import java.util.ArrayList;
 
 public class Game {
 
-    public final PlayerType player1;
-    public final PlayerType player2;
+    public final Player whitePlayer;
+    public final Player blackPlayer;
     public final int size;
     public final int komi;
     public final int handicap;
     public final ArrayList<State> states = new ArrayList<State>();
 
-    public Game(PlayerType player1, PlayerType player2) {
-        this(player1, player2, 19);
+    public Game(Player whitePlayer, Player blackPlayer) {
+        this(whitePlayer, blackPlayer, 19);
     }
 
-    public Game(PlayerType player1, PlayerType player2, int size) {
-        this(player1, player2, size, 7, 0);
+    public Game(Player whitePlayer, Player blackPlayer, int size) {
+        this(whitePlayer, blackPlayer, size, 7, 0);
     }
 
-    public Game(PlayerType player1, PlayerType player2, int size, int komi, int handicap) {
-        this.player1 = player1;
-        this.player2 = player2;
+    public Game(Player whitePlayer, Player blackPlayer, int size, int komi, int handicap) {
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
         this.size = size;
         this.komi = komi;
         this.handicap = handicap;
