@@ -122,6 +122,10 @@ public class GameScreen extends GridPane {
                         state = state.stateWithSetPosition(Game.handicap19Positions[i], false);
                 refreshBoard();
             }
+            if(state.currentPlayer instanceof ComputerPlayer){
+                computerTurn();
+                refreshBoard();
+            }
         }
     }
 
