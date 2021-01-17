@@ -2,9 +2,12 @@ package data;
 
 import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
+import data.exceptions.PlacingEmptyException;
+import data.exceptions.SelfCaptureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class State {
@@ -26,7 +29,7 @@ public class State {
         this(game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, true);
     }
 
-    private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
+    private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
         this.game = game;
         this.size = game.size;
         this.board = new Position[size][size];
@@ -35,10 +38,10 @@ public class State {
         this.blackCaptures = blackCaptures;
         this.whitePass = whitePass;
         this.blackPass = blackPass;
-        if (initToNone) {
+        if (initToEmpty) {
             for (int x = 0; x < size; x++) {
                 for (int y = 0; y < size; y++) {
-                    board[x][y] = new Position(x, y, Stone.NONE);
+                    board[x][y] = new Position(x, y, Stone.EMPTY);
                 }
             }
         }
@@ -52,8 +55,8 @@ public class State {
         this(oldBoard, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, false);
     }
 
-    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
-        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToNone);
+    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
+        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 board[x][y] = oldBoard.getPosition(x, y);
@@ -65,13 +68,13 @@ public class State {
         if (x >= 0 && x < size && y >= 0 && y < size) {
             return board[x][y];
         } else {
-            // TODO: Optimize
-            return new Position(x, y, Stone.NONE);
+            // TODO: Optimize by caching out-of-bounds-by-one positions
+            return new Position(x, y, Stone.EMPTY);
         }
     }
 
-    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException {
-        return stateWithSetPosition(position.x, position.y, position.stone);
+    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+        return stateWithSetPosition(position, true);
     }
 
     public State stateWithSetPosition(Position position, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException {
