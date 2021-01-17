@@ -183,9 +183,11 @@ public class GameScreen extends GridPane {
         add(whiteCapLabel, 1, 2, 2, 1);
 
         Button resign = new Button("Resign");
+        resign.setFont(new Font(20));
         add(resign, 0, 3);
 
         Button pass = new Button("Pass");
+        pass.setFont(new Font(20));
         add(pass, 2,3);
 
         Button computeScore = new Button("Compute score");
