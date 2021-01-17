@@ -51,7 +51,7 @@ public class GameScreen extends BorderPane {
             thickness = 4;
         }
         else if(size == 13){
-            offset = 73;
+            offset = 23;
             spacing = 54;
             thickness = 6;
         }
@@ -92,6 +92,7 @@ public class GameScreen extends BorderPane {
 
     private void drawBoard(){
         GraphicsContext gc = board.getGraphicsContext2D();
+        gc.clearRect(0,0,board.getWidth(), board.getHeight());
         gc.setFill(Color.BLACK);
         gc.setStroke(Color.BLACK);
 
@@ -145,7 +146,9 @@ public class GameScreen extends BorderPane {
 
         Button computeScore = new Button("Compute score");
         computeScore.setOnMouseClicked(event -> {
-
+            State.Scoring score = state.calculateScore();
+            System.out.println("White score " + score.whiteScore);
+            System.out.println("Black score " + score.blackScore);
         });
         bottom.add(computeScore, 2, 3);
 
