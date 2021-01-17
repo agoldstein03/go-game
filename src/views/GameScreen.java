@@ -113,6 +113,14 @@ public class GameScreen extends GridPane {
         });
 
         setupFooter();
+
+        if(handicap>0){
+            for(int i=0; i<handicap; i++){
+                if(size==19)
+                        state = state.stateWithSetPosition(Game.handicap19Positions[i], false);
+                refreshBoard();
+            }
+        }
     }
 
     private void indicateInvalidMove(GraphicsContext gc, Exception e){

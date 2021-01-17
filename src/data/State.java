@@ -19,7 +19,7 @@ public class State {
     public final boolean blackPass;
 
     public State(Game game) {
-        this(game, game.whitePlayer, 0, 0, false, false);
+        this(game, game.firstTurn, 0, 0, false, false);
     }
 
     public State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
