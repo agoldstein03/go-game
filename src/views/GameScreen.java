@@ -147,6 +147,9 @@ public class GameScreen extends BorderPane {
         Button computeScore = new Button("Compute score");
         computeScore.setOnMouseClicked(event -> {
             State.Scoring score = state.calculateScore();
+            System.out.println("White territory " + score.whiteTerritory);
+            System.out.println("Black territory " + score.blackTerritory);
+            System.out.println("Neutral territory " + score.neutralTerritory);
             System.out.println("White score " + score.whiteScore);
             System.out.println("Black score " + score.blackScore);
         });
