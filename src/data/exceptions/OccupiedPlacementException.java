@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class OccupiedPlacementException extends IllegalArgumentException {
 
     public OccupiedPlacementException(Position pos) {
-        super("There is already a stone of "+pos.toString());
+        super("There is already a stone "+pos.toString().substring(6));
     }
 
     public static void assertValid(Position pos, State state) throws OccupiedPlacementException {

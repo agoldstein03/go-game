@@ -89,25 +89,26 @@ public class GameScreen extends GridPane {
         drawBoard();
         add(board, 0, 1, 3, 1);
         board.setOnMouseClicked(event -> {
+            refreshBoard();
             double adjustedX = event.getX()+spacing/2;
             double adjustedY = event.getY()+spacing/2;
             int x = (int) ((adjustedX-offset)/spacing);
             int y = (int) ((adjustedY-offset)/spacing);
-            boolean validMove = true;
+            boolean validMove = false;
             State newState = state;
-            try{
-                newState = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
-            } catch (Exception e) {
-                validMove = false;
-                indicateInvalidMove(board.getGraphicsContext2D(), e);
+            if(state.currentPlayer instanceof HumanPlayer){
+                try{
+                    newState = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
+                    validMove = true;
+                } catch (Exception e) {
+                    indicateInvalidMove(board.getGraphicsContext2D(), e);
+                }
             }
             if(validMove){
                 if(state.getPosition(x, y).stone==Stone.EMPTY){
-                    if(state.currentPlayer instanceof HumanPlayer){
-                        state = newState;
-                        game.states.add(newState);
-                        refreshBoard();
-                    }
+                    state = newState;
+                    game.states.add(newState);
+                    refreshBoard();
                 }
             }
         });
@@ -196,6 +197,9 @@ public class GameScreen extends GridPane {
 
         Button pass = new Button("Pass");
         pass.setFont(new Font(20));
+        pass.setOnMouseClicked(event -> {
+
+        });
         add(pass, 2,3);
 
         Button computeScore = new Button("Compute score");
