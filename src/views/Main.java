@@ -7,8 +7,14 @@ import data.Game;
 
 public class Main {
 
+    private static Game game;
+
     public static Game getGame() {
-        return null;
+        return game;
+    }
+
+    public static void setGame(Game game) {
+        Main.game = game;
     }
 
     public static class MainApplication extends Application {

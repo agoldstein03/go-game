@@ -6,6 +6,14 @@ public class PlacementOutOfBoundsException extends IllegalArgumentException {
         super(message);
     }
 
+    public static boolean isValid(int x, int y, int size) {
+        return isValid(x, y) && x < size && y < size;
+    }
+
+    public static boolean isValid(int x, int y) {
+        return x >= 0 && y >= 0;
+    }
+
     public static void assertValid(int x, int y, int size) throws PlacementOutOfBoundsException {
         assertValid(x, y);
         if (x >= size) {

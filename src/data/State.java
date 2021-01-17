@@ -2,9 +2,12 @@ package data;
 
 import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
+import data.exceptions.PlacingEmptyException;
+import data.exceptions.SelfCaptureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class State {
@@ -26,7 +29,7 @@ public class State {
         this(game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, true);
     }
 
-    private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
+    private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
         this.game = game;
         this.size = game.size;
         this.board = new Position[size][size];
@@ -35,10 +38,10 @@ public class State {
         this.blackCaptures = blackCaptures;
         this.whitePass = whitePass;
         this.blackPass = blackPass;
-        if (initToNone) {
+        if (initToEmpty) {
             for (int x = 0; x < size; x++) {
                 for (int y = 0; y < size; y++) {
-                    board[x][y] = new Position(x, y, Stone.NONE);
+                    board[x][y] = new Position(x, y, Stone.EMPTY);
                 }
             }
         }
@@ -52,8 +55,8 @@ public class State {
         this(oldBoard, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, false);
     }
 
-    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToNone) {
-        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToNone);
+    public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
+        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 board[x][y] = oldBoard.getPosition(x, y);
@@ -65,29 +68,54 @@ public class State {
         if (x >= 0 && x < size && y >= 0 && y < size) {
             return board[x][y];
         } else {
-            // TODO: Optimize
-            return new Position(x, y, Stone.NONE);
+            // TODO: Optimize by caching out-of-bounds-by-one positions
+            return new Position(x, y, Stone.EMPTY);
         }
     }
 
-    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException {
-        return stateWithSetPosition(position.x, position.y, position.stone);
+    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+        return stateWithSetPosition(position, true);
     }
 
-    public State stateWithSetPosition(Position position, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException {
-        return stateWithSetPosition(position.x, position.y, position.stone, advanceTurn);
-    }
+    public State stateWithSetPosition(Position pos, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+        int x = pos.x;
+        int y = pos.y;
+        Stone stone = pos.stone;
 
-    public State stateWithSetPosition(int x, int y, Stone stone) throws PlacementOutOfBoundsException, KoException {
-        return stateWithSetPosition(x, y, stone, true);
-    }
-
-    public State stateWithSetPosition(int x, int y, Stone stone, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException {
+        PlacingEmptyException.assertValid(stone);
         PlacementOutOfBoundsException.assertValid(x, y, size);
         State newState = new State(this, advanceTurn ? currentPlayer : (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer),
                 whiteCaptures, blackCaptures, whitePass, blackPass);
         newState.setPosition(x, y, stone);
         KoException.assertValid(newState);
+        // It looks like separate processedPositions are not necessary, nor actually keeping track of the groups
+        /*
+        HashSet<Position> whiteProcessedPositions = new HashSet<Position>();
+        HashSet<Position> blackProcessedPositions = new HashSet<Position>();
+        ArrayList<Group> whiteGroups = new ArrayList<Group>();
+        ArrayList<Group> blackGroups = new ArrayList<Group>();
+         */
+        HashSet<Position> processedPositions = new HashSet<Position>();
+        SelfCaptureException.assertValid(pos, newState, processedPositions);//stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                int newX = x + dx;
+                int newY = y + dy;
+                if (!(dx == 0 && dx == 0) && PlacementOutOfBoundsException.isValid(newX, newY)) {
+                    Position newPos = getPosition(newX, newY);
+                    //HashSet<Position> processedPositions = newPos.stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions;
+                    if (!processedPositions.contains(newPos)) {
+                        //ArrayList<Group> groups = newPos.stone == Stone.WHITE ? whiteGroups : blackGroups;
+                        Group group = new Group(newPos, newState, processedPositions);
+                        if (group.countLiberties() == 0) {
+                            newState.removeGroup(group);
+                        }
+                    }
+                }
+            }
+        }
+
         return newState;
     }
 
@@ -95,6 +123,7 @@ public class State {
         board[x][y] = new Position(x, y, stone);
     }
 
+    /*
     public int countLiberties(Position pos) {
         return countLiberties(pos.x, pos.y);
     }
@@ -103,7 +132,9 @@ public class State {
         int count = 0;
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
-                if (!(dx == 0 && dx == 0) && board[x][y].stone == Stone.NONE) {
+                int newX = x + dx;
+                int newY = y + dy;
+                if (!(dx == 0 && dx == 0) && PlacementOutOfBoundsException.isValid(newX, newY) && board[newX][newY].stone == Stone.EMPTY) {
                     count++;
                 }
             }
@@ -111,54 +142,154 @@ public class State {
         return count;
     }
 
-    public ArrayList<Position> getLiberties(Position pos) {
-        return getLiberties(pos.x, pos.y);
+    public HashSet<Position> findLiberties(Position pos) {
+        return findLiberties(pos.x, pos.y);
     }
 
-    private ArrayList<Position> getLiberties(int x, int y) {
-        ArrayList<Position> liberties = new ArrayList<Position>(8);
+    private HashSet<Position> findLiberties(int x, int y) {
+        HashSet<Position> liberties = new HashSet<Position>(8);
+        findLiberties(x, y, liberties);
+        return liberties;
+    }
+
+    private void findLiberties(int x, int y, HashSet<Position> libertiesStorage) {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
-                if (!(dx == 0 && dy == 0)) {
-                    Position position = board[x][y];
-                    if (position.stone == Stone.NONE) {
-                        liberties.add(position);
+                int newX = x + dx;
+                int newY = y + dy;
+                if (!(dx == 0 && dy == 0) && PlacementOutOfBoundsException.isValid(newX, newY) ) {
+                    Position position = board[newX][newY];
+                    if (position.stone == Stone.EMPTY) {
+                        libertiesStorage.add(position);
                     }
                 }
             }
         }
-        return liberties;
+    }
+    */
+    public State stateAfterAction(Action action) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+        return action.stateAfterAction(this);
+    }
+    /*
+    private class GroupsAndEmptyPositions {
+        public final Groups groups = new Groups();
+        public final HashSet<Position> emptyPositions = new HashSet<Position>();
     }
 
-    public State stateAfterAction(Action action) {
-        return action.stateAfterAction(this);
+    private class Groups {
+
+        public final ArrayList<Group> allGroups = new ArrayList<Group>();
+        public final ArrayList<Group> whiteGroups = new ArrayList<Group>();
+        public final ArrayList<Group> blackGroups = new ArrayList<Group>();
+
+        public void add(Group group) {
+            allGroups.add(group);
+            if (group.stone == Stone.WHITE) {
+                whiteGroups.add(group);
+            } else {
+                blackGroups.add(group);
+            }
+        }
+
+    }*/
+
+    private ArrayList<Group> findAllGroups() {
+        //GroupsAndEmptyPositions groupsAndEmptyPositions = new GroupsAndEmptyPositions();
+        ArrayList<Group> groups = new ArrayList<Group>();//groupsAndEmptyPositions.groups;
+        //HashSet<Position> emptyPositions = groupsAndEmptyPositions.emptyPositions;
+        // NOTE: processedPositions only contains processed non-empty (non-EMPTY) Positions
+        // TODO: Is it worth it to make the initial size game.size ** 2?
+        HashSet<Position> processedPositions = new HashSet<Position>();
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Position pos = board[x][y];
+                if (pos.stone != Stone.EMPTY && !processedPositions.contains(pos)) {
+                    groups.add(new Group(pos, this, processedPositions));
+                }
+            }
+        }
+        return groups;
+    }
+
+    private void removeGroup(Group group) {
+        for (Position pos : group) {
+            setPosition(pos.x, pos.y, Stone.EMPTY);
+        }
     }
 
     // TODO: I don't know exactly how these 6 should relate nor which will be needed, but we'll see
 
-    public int countTerritory(Stone stone) {
-        return 0;
+
+    public class Scoring {
+
+        public final int whiteTerritory;
+        public final int blackTerritory;
+        public final int neutralTerritory;
+        public final double whiteScore;
+        public final double blackScore;
+        public final boolean didWhiteWin;
+        public final double adjustedWhiteScore;
+        public final double adjustedBlackScore;
+        public final Stone winningStone;
+        public final Player winningPlayer;
+
+        public Scoring(int whiteTerritory, int blackTerritory, int neutralTerritory) {
+            this.whiteTerritory = whiteTerritory;
+            this.blackTerritory = blackTerritory;
+            this.neutralTerritory = neutralTerritory;
+            whiteScore = whiteTerritory + (neutralTerritory / 2) + whiteCaptures + game.komi;
+            blackScore = blackTerritory + (neutralTerritory / 2) + blackCaptures;
+            didWhiteWin = whiteScore > blackScore;
+            if (didWhiteWin) {
+                adjustedWhiteScore = whiteScore - blackScore;
+                adjustedBlackScore = 0;
+                winningStone = Stone.WHITE;
+                winningPlayer = game.whitePlayer;
+            } else {
+                adjustedWhiteScore = 0;
+                adjustedBlackScore = blackScore - whiteScore;
+                winningStone = Stone.BLACK;
+                winningPlayer = game.blackPlayer;
+            }
+
+        }
+
     }
 
-    public int countWhiteTerritory() {
-        return 0;
-    }
+    public Scoring calculateScore() {
+        State state = new State(this);
 
-    public int countBlackTerritory() {
-        return 0;
-    }
+        ArrayList<Group> groups = findAllGroups();
+        for (Group group: groups) {
+            if (!group.isAlive()) {
+                state.removeGroup(group);
+            }
+        }
 
-    public int calculateScore(Stone stone) {
-        return (stone == Stone.WHITE ? whiteCaptures : blackCaptures) + countTerritory(stone);
-    }
+        int whiteArea = 0;
+        int blackArea = 0;
+        int neutralArea = 0;
+        HashSet<Position> processedPositions = new HashSet<Position>();
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Position pos = board[x][y];
+                if (pos.stone == Stone.EMPTY && !processedPositions.contains(pos)) {
+                    TerritoryArea territoryArea = new TerritoryArea(pos, this);
+                    processedPositions.addAll(territoryArea);
 
-    public int calculateWhiteScore() {
-        return whiteCaptures + countWhiteTerritory();
-    }
+                    int area = territoryArea.size();
+                    if (territoryArea.isWhite()) {
+                        whiteArea += area;
+                    } else if (territoryArea.isBlack()) {
+                        blackArea += area;
+                    } else {
+                        neutralArea += area;
+                    }
+                }
+            }
+        }
 
-    public int calculateBlackScore() {
-        return blackCaptures + countBlackTerritory();
-
+        return new Scoring(whiteArea, blackArea, neutralArea);
     }
 
     /* Auto-generated equals/hashCode by IntelliJ IDEA */

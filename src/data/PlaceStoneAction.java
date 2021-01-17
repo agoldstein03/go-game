@@ -2,7 +2,8 @@ package data;
 
 import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
-import data.exceptions.PlacingNoneException;
+import data.exceptions.PlacingEmptyException;
+import data.exceptions.SelfCaptureException;
 
 public class PlaceStoneAction implements Action {
 
@@ -10,14 +11,14 @@ public class PlaceStoneAction implements Action {
 
     public PlaceStoneAction(Position position) {
         PlacementOutOfBoundsException.assertValid(position.x, position.y);
-        if (position.stone == Stone.NONE) {
-            throw new PlacingNoneException();
+        if (position.stone == Stone.EMPTY) {
+            throw new PlacingEmptyException();
         }
         this.position = position;
     }
 
     @Override
-    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException, KoException {
+    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
         return stateBefore.stateWithSetPosition(position, true);
     }
 
