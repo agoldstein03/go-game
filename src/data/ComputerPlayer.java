@@ -1,6 +1,8 @@
 package data;
 
-public class ComputerPlayer extends Player{
+import java.util.ArrayList;
+
+public class ComputerPlayer extends Player {
 
     private boolean black;
 
@@ -14,6 +16,7 @@ public class ComputerPlayer extends Player{
 
     @Override
     public Action chooseAction(State state) {
-        return null;
+        return new RandomPlayer(black).chooseAction(state);
     }
+
 }
