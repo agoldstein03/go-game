@@ -109,10 +109,10 @@ public class State {
         HashSet<Position> processedPositions = new HashSet<Position>();
 
         int captured = 0;
-        captured += newState.removeGroupIfNeeded(x - 1, y, processedPositions);
-        captured += newState.removeGroupIfNeeded(x + 1, y, processedPositions);
-        captured += newState.removeGroupIfNeeded(x, y - 1, processedPositions);
-        captured += newState.removeGroupIfNeeded(x, y + 1, processedPositions);
+        captured += newState.removeGroupIfNeeded(x - 1, y, stone, processedPositions);
+        captured += newState.removeGroupIfNeeded(x + 1, y, stone, processedPositions);
+        captured += newState.removeGroupIfNeeded(x, y - 1, stone, processedPositions);
+        captured += newState.removeGroupIfNeeded(x, y + 1, stone, processedPositions);
 
         if (captured > 0) {
             boolean isBlack = currentPlayer.isBlack();
@@ -125,7 +125,7 @@ public class State {
         return newState;
     }
 
-    private int removeGroupIfNeeded(int x, int y, HashSet<Position> processedPositions) {
+    private int removeGroupIfNeeded(int x, int y, Stone stone, HashSet<Position> processedPositions) {
         int captured = 0;
         if (PlacementOutOfBoundsException.isValid(x, y)) {
             Position newPos = getPosition(x, y);
@@ -133,7 +133,7 @@ public class State {
             if (!processedPositions.contains(newPos)) {
                 //ArrayList<Group> groups = newPos.stone == Stone.WHITE ? whiteGroups : blackGroups;
                 Group group = new Group(newPos, this, processedPositions);
-                if (group.countLiberties() == 0) {
+                if (group.stone != stone && group.countLiberties() == 0) {
                     int area = group.size();
                     this.removeGroup(group);
                 }
