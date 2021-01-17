@@ -1,9 +1,6 @@
 package data;
 
-import data.exceptions.KoException;
-import data.exceptions.PlacementOutOfBoundsException;
-import data.exceptions.PlacingEmptyException;
-import data.exceptions.SelfCaptureException;
+import data.exceptions.*;
 
 public class ActionWithStates {
 
@@ -11,7 +8,7 @@ public class ActionWithStates {
     public final Action action;
     public final State stateAfter;
 
-    public ActionWithStates(State stateBefore, Action action) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+    public ActionWithStates(State stateBefore, Action action) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException, OccupiedPlacementException {
         this.stateBefore = stateBefore;
         this.action = action;
         this.stateAfter = action.stateAfterAction(stateBefore);

@@ -1,9 +1,6 @@
 package data;
 
-import data.exceptions.KoException;
-import data.exceptions.PlacementOutOfBoundsException;
-import data.exceptions.PlacingEmptyException;
-import data.exceptions.SelfCaptureException;
+import data.exceptions.*;
 
 public class PlaceStoneAction implements Action {
 
@@ -18,7 +15,7 @@ public class PlaceStoneAction implements Action {
     }
 
     @Override
-    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException, OccupiedPlacementException {
         return stateBefore.stateWithSetPosition(position, true);
     }
 

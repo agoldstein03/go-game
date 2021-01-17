@@ -1,9 +1,6 @@
 package data;
 
-import data.exceptions.KoException;
-import data.exceptions.PlacementOutOfBoundsException;
-import data.exceptions.PlacingEmptyException;
-import data.exceptions.SelfCaptureException;
+import data.exceptions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,11 +70,11 @@ public class State {
         }
     }
 
-    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException, OccupiedPlacementException {
         return stateWithSetPosition(position, true);
     }
 
-    public State stateWithSetPosition(Position pos, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+    public State stateWithSetPosition(Position pos, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException, OccupiedPlacementException {
         int x = pos.x;
         int y = pos.y;
         Stone stone = pos.stone;
@@ -169,7 +166,7 @@ public class State {
         }
     }
     */
-    public State stateAfterAction(Action action) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException {
+    public State stateAfterAction(Action action) throws PlacementOutOfBoundsException, KoException, SelfCaptureException, PlacingEmptyException, OccupiedPlacementException {
         return action.stateAfterAction(this);
     }
     /*
