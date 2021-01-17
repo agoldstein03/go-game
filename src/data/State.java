@@ -47,7 +47,20 @@ public class State {
     // TODO: Need to verify that passes are reset correctly after a placement is made;
 
     public State(State oldBoard) {
-        this(oldBoard, oldBoard.currentPlayer, oldBoard.whiteCaptures, oldBoard.blackCaptures, oldBoard.whitePass, oldBoard.blackPass);
+        this(oldBoard, false);
+    }
+
+    public State(State oldBoard, boolean advanceTurn) {
+        this(oldBoard, advanceTurn, oldBoard.whiteCaptures, oldBoard.blackCaptures);
+    }
+
+    public State(State oldBoard, boolean advanceTurn, int whiteCaptures, int blackCaptures) {
+        this(oldBoard, advanceTurn, whiteCaptures, blackCaptures, oldBoard.whitePass, oldBoard.blackPass);
+    }
+
+    public State(State oldBoard, boolean advanceTurn, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
+        this(oldBoard, advanceTurn ? (oldBoard.game.whitePlayer == oldBoard.currentPlayer ? oldBoard.game.blackPlayer : oldBoard.game.whitePlayer) : oldBoard.currentPlayer,
+                whiteCaptures, blackCaptures, whitePass, blackPass);
     }
 
     public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
