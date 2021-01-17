@@ -44,6 +44,8 @@ public class State {
         }
     }
 
+    // TODO: Need to verify that passes are reset correctly after a placement is made;
+
     public State(State oldBoard) {
         this(oldBoard, oldBoard.currentPlayer, oldBoard.whiteCaptures, oldBoard.blackCaptures, oldBoard.whitePass, oldBoard.blackPass);
     }
@@ -82,8 +84,7 @@ public class State {
         PlacingEmptyException.assertValid(stone);
         PlacementOutOfBoundsException.assertValid(x, y, size);
         OccupiedPlacementException.assertValid(pos, this);
-        State newState = new State(this, advanceTurn ? (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer) : currentPlayer,
-                whiteCaptures, blackCaptures, whitePass, blackPass);
+        State newState = new State(this, advanceTurn, whiteCaptures, blackCaptures, false, false);
         newState.setPosition(x, y, stone);
         // It looks like separate processedPositions are not necessary, nor actually keeping track of the groups
         /*
