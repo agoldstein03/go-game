@@ -21,7 +21,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 
 public class GameScreen extends BorderPane {
 
@@ -86,14 +93,9 @@ public class GameScreen extends BorderPane {
             State newState = state;
             try{
                 newState = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
-            } catch (KoException ke) {
+            } catch (Exception e) {
                 validMove = false;
-            } catch (SelfCaptureException sce) {
-                validMove = false;
-            } catch (PlacementOutOfBoundsException poobe) {
-                validMove = false;
-            } catch (PlacingEmptyException pee) {
-                validMove = false;
+                indicateInvalidMove(board.getGraphicsContext2D(), e);
             }
             if(validMove){
                 if(state.getPosition(x, y).stone==Stone.EMPTY){
@@ -107,6 +109,22 @@ public class GameScreen extends BorderPane {
 
         setupFooter();
         setBottom(bottom);
+    }
+
+    private void indicateInvalidMove(GraphicsContext gc, Exception e){
+        gc.setFill(Color.RED);
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(VPos.TOP);
+        gc.setFont(new Font(20));
+        gc.fillText("Invalid move: " + e.getMessage(), board.getWidth()/2, 0);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                refreshBoard();
+            }
+        }, 2500, TimeUnit.MILLISECONDS);
+
     }
 
     private void drawBoard(){
@@ -148,6 +166,7 @@ public class GameScreen extends BorderPane {
 
         drawBoard();
     }
+
 
 
     private void setupFooter(){
