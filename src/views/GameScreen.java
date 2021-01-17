@@ -67,7 +67,7 @@ public class GameScreen extends BorderPane {
             thickness = 6;
         }
         else { //9x9
-            offset = 11;
+            offset = -5;
             spacing = 80;
             thickness = 8;
         }
