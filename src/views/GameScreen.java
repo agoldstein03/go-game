@@ -2,6 +2,10 @@ package views;
 
 import com.sun.rowset.internal.Row;
 import data.*;
+import data.exceptions.KoException;
+import data.exceptions.PlacementOutOfBoundsException;
+import data.exceptions.PlacingEmptyException;
+import data.exceptions.SelfCaptureException;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -51,7 +55,7 @@ public class GameScreen extends BorderPane {
             thickness = 4;
         }
         else if(size == 13){
-            offset = 23;
+            offset = 9;
             spacing = 54;
             thickness = 6;
         }
@@ -78,10 +82,25 @@ public class GameScreen extends BorderPane {
             double adjustedY = event.getY()+spacing/2;
             int x = (int) ((adjustedX-offset)/spacing);
             int y = (int) ((adjustedY-offset)/spacing);
-            if(state.getPosition(x, y).stone==Stone.EMPTY){
-                if(state.currentPlayer instanceof HumanPlayer){
-                    state = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
-                    refreshBoard();
+            boolean validMove = true;
+            State newState = state;
+            try{
+                newState = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
+            } catch (KoException ke) {
+                validMove = false;
+            } catch (SelfCaptureException sce) {
+                validMove = false;
+            } catch (PlacementOutOfBoundsException poobe) {
+                validMove = false;
+            } catch (PlacingEmptyException pee) {
+                validMove = false;
+            }
+            if(validMove){
+                if(state.getPosition(x, y).stone==Stone.EMPTY){
+                    if(state.currentPlayer instanceof HumanPlayer){
+                        state = newState;
+                        refreshBoard();
+                    }
                 }
             }
         });
