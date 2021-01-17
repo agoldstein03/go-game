@@ -67,8 +67,8 @@ public class GameScreen extends BorderPane {
             thickness = 6;
         }
         else { //9x9
-            offset = 42;
-            spacing = 32;
+            offset = 11;
+            spacing = 80;
             thickness = 8;
         }
         offset = offset+spacing/2+thickness*2;
@@ -101,6 +101,7 @@ public class GameScreen extends BorderPane {
                 if(state.getPosition(x, y).stone==Stone.EMPTY){
                     if(state.currentPlayer instanceof HumanPlayer){
                         state = newState;
+                        game.states.add(newState);
                         refreshBoard();
                     }
                 }
