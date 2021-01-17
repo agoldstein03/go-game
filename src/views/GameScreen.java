@@ -78,9 +78,11 @@ public class GameScreen extends BorderPane {
             double adjustedY = event.getY()+spacing/2;
             int x = (int) ((adjustedX-offset)/spacing);
             int y = (int) ((adjustedY-offset)/spacing);
-            if(state.currentPlayer instanceof HumanPlayer){
-                state = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
-                refreshBoard();
+            if(state.getPosition(x, y).stone==Stone.EMPTY){
+                if(state.currentPlayer instanceof HumanPlayer){
+                    state = state.stateAfterAction(((HumanPlayer) state.currentPlayer).chooseAction(x>=0 ? x:0, y>=0 ? y:0));
+                    refreshBoard();
+                }
             }
         });
 
