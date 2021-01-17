@@ -13,7 +13,7 @@ public class ComputerPlayer extends Player{
     }
 
     @Override
-    public Action chooseAction() {
+    public Action chooseAction(State state) {
         return null;
     }
 }

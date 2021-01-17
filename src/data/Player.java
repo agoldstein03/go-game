@@ -1,7 +1,7 @@
 package data;
 
 public abstract class Player {
-
+    /*
     private Game game;
 
     public void setGame(Game game) {
@@ -11,8 +11,8 @@ public abstract class Player {
     public Game getGame() {
         return game;
     }
-
-    public abstract Action chooseAction();
+    */
+    public abstract Action chooseAction(State state);
 
     public abstract boolean isBlack();
 }
