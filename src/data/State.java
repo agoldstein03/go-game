@@ -84,7 +84,7 @@ public class State {
 
         PlacingEmptyException.assertValid(stone);
         PlacementOutOfBoundsException.assertValid(x, y, size);
-        State newState = new State(this, advanceTurn ? currentPlayer : (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer),
+        State newState = new State(this, advanceTurn ? (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer) : currentPlayer,
                 whiteCaptures, blackCaptures, whitePass, blackPass);
         newState.setPosition(x, y, stone);
         KoException.assertValid(newState);
