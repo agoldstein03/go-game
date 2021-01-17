@@ -81,10 +81,10 @@ public class State {
 
         PlacingEmptyException.assertValid(stone);
         PlacementOutOfBoundsException.assertValid(x, y, size);
+        OccupiedPlacementException.assertValid(pos, this);
         State newState = new State(this, advanceTurn ? (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer) : currentPlayer,
                 whiteCaptures, blackCaptures, whitePass, blackPass);
         newState.setPosition(x, y, stone);
-        KoException.assertValid(newState);
         // It looks like separate processedPositions are not necessary, nor actually keeping track of the groups
         /*
         HashSet<Position> whiteProcessedPositions = new HashSet<Position>();
@@ -93,12 +93,14 @@ public class State {
         ArrayList<Group> blackGroups = new ArrayList<Group>();
          */
         HashSet<Position> processedPositions = new HashSet<Position>();
-        SelfCaptureException.assertValid(pos, newState, processedPositions);//stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
 
         newState.removeGroupIfNeeded(x - 1, y, processedPositions);
         newState.removeGroupIfNeeded(x + 1, y, processedPositions);
         newState.removeGroupIfNeeded(x, y - 1, processedPositions);
         newState.removeGroupIfNeeded(x, y + 1, processedPositions);
+
+        SelfCaptureException.assertValid(pos, newState); //, processedPositions //, stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
+        KoException.assertValid(newState, game);
 
         return newState;
     }
