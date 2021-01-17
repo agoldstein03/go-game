@@ -1,6 +1,7 @@
 package views;
 
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -11,6 +12,7 @@ public class MainWindow extends Stage {
     private BorderPane mainPane;
 
     public MainWindow(){
+        this.getIcons().add(new Image("file:..\\..\\Graphics\\whiteStone.png"));
         mainPane = new BorderPane();
         this.setResizable(false);
         Scene mainScene = new Scene(mainPane, 800, 900);
