@@ -248,6 +248,8 @@ public class State {
         public final int whiteTerritory;
         public final int blackTerritory;
         public final int neutralTerritory;
+        public final int whiteCaptures;
+        public final int blackCaptures;
         public final double whiteScore;
         public final double blackScore;
         public final boolean didWhiteWin;
@@ -256,10 +258,12 @@ public class State {
         public final Stone winningStone;
         public final Player winningPlayer;
 
-        public Scoring(int whiteTerritory, int blackTerritory, int neutralTerritory) {
+        public Scoring(int whiteTerritory, int blackTerritory, int neutralTerritory, int whiteCaptures, int blackCaptures) {
             this.whiteTerritory = whiteTerritory;
             this.blackTerritory = blackTerritory;
             this.neutralTerritory = neutralTerritory;
+            this.whiteCaptures = whiteCaptures;
+            this.blackCaptures = blackCaptures;
             whiteScore = whiteTerritory + (neutralTerritory / 2) + whiteCaptures + game.komi;
             blackScore = blackTerritory + (neutralTerritory / 2) + blackCaptures;
             didWhiteWin = whiteScore > blackScore;
@@ -283,8 +287,16 @@ public class State {
         State state = new State(this);
 
         ArrayList<Group> groups = findAllGroups();
+        int newWhiteCaptures = 0;
+        int newBlackCaptures = 0;
         for (Group group: groups) {
             if (!group.isAlive()) {
+                int area = group.size();
+                if (group.stone == Stone.WHITE) {
+                    newBlackCaptures += area;
+                } else {
+                    newWhiteCaptures += area;
+                }
                 state.removeGroup(group);
             }
         }
@@ -312,7 +324,7 @@ public class State {
             }
         }
 
-        return new Scoring(whiteArea, blackArea, neutralArea);
+        return new Scoring(whiteArea, blackArea, neutralArea, whiteCaptures + newWhiteCaptures, blackCaptures + newBlackCaptures);
     }
 
     public ArrayList<Action> validActions() {
