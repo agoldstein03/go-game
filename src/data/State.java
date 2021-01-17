@@ -94,10 +94,16 @@ public class State {
          */
         HashSet<Position> processedPositions = new HashSet<Position>();
 
-        newState.removeGroupIfNeeded(x - 1, y, processedPositions);
-        newState.removeGroupIfNeeded(x + 1, y, processedPositions);
-        newState.removeGroupIfNeeded(x, y - 1, processedPositions);
-        newState.removeGroupIfNeeded(x, y + 1, processedPositions);
+        int captured = 0;
+        captured += newState.removeGroupIfNeeded(x - 1, y, processedPositions);
+        captured += newState.removeGroupIfNeeded(x + 1, y, processedPositions);
+        captured += newState.removeGroupIfNeeded(x, y - 1, processedPositions);
+        captured += newState.removeGroupIfNeeded(x, y + 1, processedPositions);
+
+        if (captured > 0) {
+            boolean isBlack = currentPlayer.isBlack();
+            newState = new State(newState, false, isBlack ? whiteCaptures : whiteCaptures + captured, isBlack ? blackCaptures + captured : blackCaptures);
+        }
 
         SelfCaptureException.assertValid(pos, newState); //, processedPositions //, stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
         KoException.assertValid(newState, game);
@@ -105,7 +111,8 @@ public class State {
         return newState;
     }
 
-    private void removeGroupIfNeeded(int x, int y, HashSet<Position> processedPositions) {
+    private int removeGroupIfNeeded(int x, int y, HashSet<Position> processedPositions) {
+        int captured = 0;
         if (PlacementOutOfBoundsException.isValid(x, y)) {
             Position newPos = getPosition(x, y);
             //HashSet<Position> processedPositions = newPos.stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions;
@@ -113,11 +120,12 @@ public class State {
                 //ArrayList<Group> groups = newPos.stone == Stone.WHITE ? whiteGroups : blackGroups;
                 Group group = new Group(newPos, this, processedPositions);
                 if (group.countLiberties() == 0) {
+                    int area = group.size();
                     this.removeGroup(group);
                 }
             }
         }
-
+        return captured;
     }
 
     private void setPosition(int x, int y, Stone stone) {
