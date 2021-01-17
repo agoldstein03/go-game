@@ -19,9 +19,11 @@ public class HumanPlayer extends Player {
     }
 
     public Action chooseAction(int x, int y) {
-        if(x>=0){
+        if(x>=0)
             return new PlaceStoneAction(new Position(x, y, black ? Stone.BLACK:Stone.WHITE));
-        } else
+        else
             return null;
     }
+
+    public Action pass() {return new PassAction();}
 }

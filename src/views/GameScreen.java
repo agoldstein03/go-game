@@ -107,10 +107,11 @@ public class GameScreen extends GridPane {
             if(validMove){
                 if(state.getPosition(x, y).stone==Stone.EMPTY){
                     state = newState;
-                    game.states.add(newState);
+                    game.states.add(state);
                     refreshBoard();
                 }
             }
+            computerTurn();
         });
 
         setupFooter();
@@ -131,12 +132,7 @@ public class GameScreen extends GridPane {
         gc.setFont(new Font(20));
         gc.fillText("Invalid move: " + e.getMessage(), board.getWidth()/2, 0);
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.schedule(new Runnable() {
-            @Override
-            public void run() {
-                refreshBoard();
-            }
-        }, 2500, TimeUnit.MILLISECONDS);
+        executorService.schedule(() -> refreshBoard(), 2500, TimeUnit.MILLISECONDS);
 
     }
 
@@ -198,7 +194,16 @@ public class GameScreen extends GridPane {
         Button pass = new Button("Pass");
         pass.setFont(new Font(20));
         pass.setOnMouseClicked(event -> {
-
+            if(state.currentPlayer instanceof HumanPlayer){
+                try{
+                    state = ((HumanPlayer) state.currentPlayer).pass().stateAfterAction(state);
+                    game.states.add(state);
+                    refreshBoard();
+                } catch (Exception e) {
+                    indicateInvalidMove(board.getGraphicsContext2D(), e);
+                }
+            }
+            computerTurn();
         });
         add(pass, 2,3);
 
@@ -227,4 +232,11 @@ public class GameScreen extends GridPane {
         }
     }
 
+    private void computerTurn(){
+        if(state.currentPlayer instanceof ComputerPlayer){
+            state = state.stateAfterAction(state.currentPlayer.chooseAction(state));
+            game.states.add(state);
+            refreshBoard();
+        }
+    }
 }
