@@ -14,4 +14,5 @@ public abstract class Player {
 
     public abstract Action chooseAction();
 
+    public abstract boolean isBlack();
 }

@@ -1,5 +1,9 @@
 package views;
 
+import data.ComputerPlayer;
+import data.Game;
+import data.HumanPlayer;
+import data.Player;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -65,9 +69,6 @@ public class SetupScreen extends GridPane {
         boardSelector.setStyle("-fx-font-size: 15pt;");
         add(boardSelector, 1, 4);
 
-
-
-
         Label komi = new Label("Komi");
         komi.setFont(new Font(60));
         komi.setPadding(new Insets(0,0,0,262));
@@ -102,10 +103,8 @@ public class SetupScreen extends GridPane {
 
         Button start = new Button("Start");
         start.setFont(new Font(45));
-        start.setOnMouseClicked(event -> {
 
-        });
-
+        RadioButton playerWhite = new RadioButton("White");
 
         if(vsAI){
             Label color = new Label("Color");
@@ -120,7 +119,7 @@ public class SetupScreen extends GridPane {
             //playerBlack.setPadding(new Insets(30,0,0,0));
             playerBlack.setToggleGroup(playerColor);
 
-            RadioButton playerWhite = new RadioButton("White");
+
             playerWhite.setFont(new Font(25));
             playerWhite.setPadding(new Insets(0,0,0,8));
             playerWhite.setToggleGroup(playerColor);
@@ -136,6 +135,28 @@ public class SetupScreen extends GridPane {
             add(start, 1, 10);
             add(back, 0, 10);
         }
+
+        start.setOnMouseClicked(event -> {
+            int[] boardSizeArray = new int[]{9,13,19};
+            GameScreen game;
+            int size= boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()];
+            double komiValue = komiEntry.getText().isEmpty() ? 0:Double.parseDouble(komiEntry.getText());
+            int handicapValue = handicapSelector.getSelectionModel().getSelectedIndex();
+
+            if(!vsAI){
+                game = new GameScreen(mainStage, new HumanPlayer(false), new HumanPlayer(true), size, komiValue, handicapValue);
+                //game = new Game(PlayerType.HUMAN, PlayerType.HUMAN, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
+            } else{
+                if(playerWhite.isSelected()){
+                    game = new GameScreen(mainStage, new HumanPlayer(false), new ComputerPlayer(true), size, komiValue, handicapValue);
+                    //game = new Game(PlayerType.COMPUTER, PlayerType.HUMAN, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
+                } else{
+                    game = new GameScreen(mainStage, new ComputerPlayer(false), new HumanPlayer(true), size, komiValue, handicapValue);
+                    //game = new Game(PlayerType.HUMAN, PlayerType.COMPUTER, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
+                }
+            }
+            mainStage.changeScreen(game);
+        });
 
         for(Node node : this.getChildren()){
             node.setStyle(node.getStyle()+"-fx-faint-focus-color: transparent;" + "-fx-focus-color: transparent;");
