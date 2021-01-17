@@ -301,6 +301,21 @@ public class State {
         return new Scoring(whiteArea, blackArea, neutralArea);
     }
 
+    public ArrayList<Action> validActions() {
+        ArrayList<Action> actions = new ArrayList<Action>();
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Position pos = new Position(x, y, currentPlayer.isBlack() ? Stone.BLACK : Stone.WHITE);
+                try {
+                    stateWithSetPosition(pos);
+                    actions.add(new PlaceStoneAction(pos)); // Will not be reached if the placement is invalid
+                } catch (PlacementOutOfBoundsException | KoException | SelfCaptureException | PlacingEmptyException | OccupiedPlacementException exception) {}
+            }
+        }
+        actions.add(new PassAction());
+        return actions;
+    }
+
     /* Auto-generated equals/hashCode by IntelliJ IDEA */
 
     @Override
