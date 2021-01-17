@@ -38,7 +38,7 @@ public class GameScreen extends BorderPane {
     private Canvas board;
     private MainWindow mainWindow;
     private State state;
-    public static Game game;
+    public Game game;
     private int size;
     private int spacing;
     private int offset;
@@ -202,7 +202,4 @@ public class GameScreen extends BorderPane {
         }
     }
 
-    public static Game getGame() {
-        return game;
-    }
 }
