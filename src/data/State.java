@@ -98,25 +98,27 @@ public class State {
         HashSet<Position> processedPositions = new HashSet<Position>();
         SelfCaptureException.assertValid(pos, newState, processedPositions);//stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                int newX = x + dx;
-                int newY = y + dy;
-                if (!(dx == 0 && dx == 0) && PlacementOutOfBoundsException.isValid(newX, newY)) {
-                    Position newPos = getPosition(newX, newY);
-                    //HashSet<Position> processedPositions = newPos.stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions;
-                    if (!processedPositions.contains(newPos)) {
-                        //ArrayList<Group> groups = newPos.stone == Stone.WHITE ? whiteGroups : blackGroups;
-                        Group group = new Group(newPos, newState, processedPositions);
-                        if (group.countLiberties() == 0) {
-                            newState.removeGroup(group);
-                        }
-                    }
+        newState.removeGroupIfNeeded(x - 1, y, processedPositions);
+        newState.removeGroupIfNeeded(x + 1, y, processedPositions);
+        newState.removeGroupIfNeeded(x, y - 1, processedPositions);
+        newState.removeGroupIfNeeded(x, y + 1, processedPositions);
+
+        return newState;
+    }
+
+    private void removeGroupIfNeeded(int x, int y, HashSet<Position> processedPositions) {
+        if (PlacementOutOfBoundsException.isValid(x, y)) {
+            Position newPos = getPosition(x, y);
+            //HashSet<Position> processedPositions = newPos.stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions;
+            if (!processedPositions.contains(newPos)) {
+                //ArrayList<Group> groups = newPos.stone == Stone.WHITE ? whiteGroups : blackGroups;
+                Group group = new Group(newPos, this, processedPositions);
+                if (group.countLiberties() == 0) {
+                    this.removeGroup(group);
                 }
             }
         }
 
-        return newState;
     }
 
     private void setPosition(int x, int y, Stone stone) {
