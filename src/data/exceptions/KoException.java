@@ -1,27 +1,21 @@
 package data.exceptions;
 
+import data.State;
+import views.Main;
+
+import java.util.ArrayList;
+
 public class KoException extends IllegalArgumentException {
 
     public KoException(String message) {
         super(message);
     }
 
-    public static void assertValid(int x, int y, int size) {
-        assertValid(x, y);
-        if (x >= size) {
-            throw new KoException("x (" + x + ") is greater/equal to the size (" + size + ")");
-        }
-        if (y >= size) {
-            throw new KoException("y (" + y + ") is greater/equal to the size (" + size + ")");
-        }
-    }
-
-    public static void assertValid(int x, int y) {
-        if (x < 0) {
-            throw new KoException("x (" + x + ") is less than 0");
-        }
-        if (y < 0) {
-            throw new KoException("y (" + y + ") is less than 0");
+    public static void assertValid(State state) throws KoException {
+        ArrayList<State> states = Main.getGame().states;
+        int size = states.size();
+        if (size > 1 && states.get(size - 2).equals(state)) {
+            throw new KoException("New state would lead to Ko");
         }
     }
 

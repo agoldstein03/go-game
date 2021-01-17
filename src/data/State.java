@@ -1,8 +1,11 @@
 package data;
 
+import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class State {
 
@@ -67,24 +70,25 @@ public class State {
         }
     }
 
-    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException {
+    public State stateWithSetPosition(Position position) throws PlacementOutOfBoundsException, KoException {
         return stateWithSetPosition(position.x, position.y, position.stone);
     }
 
-    public State stateWithSetPosition(Position position, boolean advanceTurn) throws PlacementOutOfBoundsException {
+    public State stateWithSetPosition(Position position, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException {
         return stateWithSetPosition(position.x, position.y, position.stone, advanceTurn);
     }
 
-    public State stateWithSetPosition(int x, int y, Stone stone) throws PlacementOutOfBoundsException {
+    public State stateWithSetPosition(int x, int y, Stone stone) throws PlacementOutOfBoundsException, KoException {
         return stateWithSetPosition(x, y, stone, true);
     }
 
-    public State stateWithSetPosition(int x, int y, Stone stone, boolean advanceTurn) throws PlacementOutOfBoundsException {
+    public State stateWithSetPosition(int x, int y, Stone stone, boolean advanceTurn) throws PlacementOutOfBoundsException, KoException {
         PlacementOutOfBoundsException.assertValid(x, y, size);
-        State newBoard = new State(this, advanceTurn ? currentPlayer : (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer),
+        State newState = new State(this, advanceTurn ? currentPlayer : (game.whitePlayer == currentPlayer ? game.blackPlayer : game.whitePlayer),
                 whiteCaptures, blackCaptures, whitePass, blackPass);
-        newBoard.setPosition(x, y, stone);
-        return newBoard;
+        newState.setPosition(x, y, stone);
+        KoException.assertValid(newState);
+        return newState;
     }
 
     private void setPosition(int x, int y, Stone stone) {
@@ -130,4 +134,54 @@ public class State {
         return action.stateAfterAction(this);
     }
 
+    // TODO: I don't know exactly how these 6 should relate nor which will be needed, but we'll see
+
+    public int countTerritory(Stone stone) {
+        return 0;
+    }
+
+    public int countWhiteTerritory() {
+        return 0;
+    }
+
+    public int countBlackTerritory() {
+        return 0;
+    }
+
+    public int calculateScore(Stone stone) {
+        return (stone == Stone.WHITE ? whiteCaptures : blackCaptures) + countTerritory(stone);
+    }
+
+    public int calculateWhiteScore() {
+        return whiteCaptures + countWhiteTerritory();
+    }
+
+    public int calculateBlackScore() {
+        return blackCaptures + countBlackTerritory();
+
+    }
+
+    /* Auto-generated equals/hashCode by IntelliJ IDEA */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        State state = (State) o;
+        return size == state.size &&
+                whiteCaptures == state.whiteCaptures &&
+                blackCaptures == state.blackCaptures &&
+                whitePass == state.whitePass &&
+                blackPass == state.blackPass &&
+                game.equals(state.game) &&
+                Arrays.equals(board, state.board) &&
+                currentPlayer.equals(state.currentPlayer);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(game, size, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass);
+        result = 31 * result + Arrays.hashCode(board);
+        return result;
+    }
 }

@@ -18,6 +18,8 @@ public class Position {
         return String.format("%s at (%d, %d)", stone, x, y);
     }
 
+    /* Auto-generated equals/hashCode by IntelliJ IDEA */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

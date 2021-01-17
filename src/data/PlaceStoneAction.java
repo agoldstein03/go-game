@@ -1,5 +1,6 @@
 package data;
 
+import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
 import data.exceptions.PlacingNoneException;
 
@@ -16,8 +17,8 @@ public class PlaceStoneAction implements Action {
     }
 
     @Override
-    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException {
-        return null;
+    public State stateAfterAction(State stateBefore) throws PlacementOutOfBoundsException, KoException {
+        return stateBefore.stateWithSetPosition(position, true);
     }
 
     @Override
