@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class Position {
 
+    // TODO: See if performance would be improved by caching Positions, so the constructor would be private and a public static method like Position.at(int x, int y, Stone stone) would be used instead
+
     public final int x;
     public final int y;
     public final Stone stone;
