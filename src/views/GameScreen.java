@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 public class GameScreen extends GridPane {
 
-    private Image blackStone = new Image("file:..\\..\\Graphics\\BlackStone.png");
-    private Image whiteStone = new Image("file:..\\..\\Graphics\\WhiteStone.png");
+    //private Image blackStone = new Image("file:..\\..\\Graphics\\BlackStone.png");
+    //private Image whiteStone = new Image("file:..\\..\\Graphics\\WhiteStone.png");
 
     private Canvas board;
     private MainWindow mainWindow;
@@ -54,6 +54,7 @@ public class GameScreen extends GridPane {
     private Label header;
     private Label blackCapLabel;
     private Label whiteCapLabel;
+    private Label invalidMoveIndicator = new Label("");
 
     public GameScreen(MainWindow parent, Player whitePlayer, Player blackPlayer, int size, double komi, int handicap){
         mainWindow = parent;
@@ -133,14 +134,17 @@ public class GameScreen extends GridPane {
     }
 
     private void indicateInvalidMove(GraphicsContext gc, Exception e){
-        gc.setFill(Color.RED);
+        gc.setFill(Color.INDIGO);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.TOP);
-        gc.setFont(new Font(20));
+        gc.setFont(new Font(25));
         gc.fillText("Invalid move: " + e.getMessage(), board.getWidth()/2, 0);
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.schedule(() -> refreshBoard(), 2500, TimeUnit.MILLISECONDS);
-
+        /*invalidMoveIndicator.setText("");
+        invalidMoveIndicator.setText("Invalid move: " + e.getMessage());
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.schedule(() -> invalidMoveIndicator.setText(""), 2500, TimeUnit.MILLISECONDS);*/
     }
 
     private void drawBoard(){
@@ -186,6 +190,9 @@ public class GameScreen extends GridPane {
 
 
     private void setupFooter(){
+        invalidMoveIndicator.setTextFill(Color.RED);
+        add(invalidMoveIndicator, 1, 3);
+
         blackCapLabel = new Label("Black captured: " + blackCap);
         blackCapLabel.setFont(new Font(30));
         add(blackCapLabel, 0, 2, 2, 1);
@@ -230,6 +237,7 @@ public class GameScreen extends GridPane {
             System.out.println("Black score " + score.blackScore);
         });
         add(computeScore, 1, 3);*/
+
     }
 
     private void setRowColumnSizing() {
@@ -239,7 +247,7 @@ public class GameScreen extends GridPane {
         }
         getRowConstraints().get(2).setValignment(VPos.TOP);
 
-        getColumnConstraints().addAll(new ColumnConstraints(300), new ColumnConstraints(200), new ColumnConstraints(300));
+        getColumnConstraints().addAll(new ColumnConstraints(250), new ColumnConstraints(300), new ColumnConstraints(250));
         for(int i=0; i<3; i++){
             getColumnConstraints().get(i).setHalignment(HPos.CENTER);
         }

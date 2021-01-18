@@ -12,7 +12,7 @@ public class MainWindow extends Stage {
     private BorderPane mainPane;
 
     public MainWindow(){
-        this.getIcons().add(new Image("file:..\\..\\Graphics\\whiteStone.png"));
+        this.getIcons().add(new Image(this.getClass().getResourceAsStream("/WhiteStone.png")));
         mainPane = new BorderPane();
         this.setResizable(false);
         Scene mainScene = new Scene(mainPane, 800, 900);

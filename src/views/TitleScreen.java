@@ -21,7 +21,7 @@ public class TitleScreen extends GridPane {
     private MainWindow mainStage;
     private GridPane pane;
 
-    public static final Background WOODBACKGROUND = new Background(new BackgroundImage(new Image("file:..\\..\\Graphics\\WoodBackground.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT));
+    public static final Background WOODBACKGROUND = new Background(new BackgroundImage(new Image(TitleScreen.class.getResourceAsStream("/WoodBackground.png")), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT));
 
     public TitleScreen(MainWindow parent){
         super();

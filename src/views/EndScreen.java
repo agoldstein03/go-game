@@ -82,7 +82,7 @@ public class EndScreen extends StackPane {
         foreground.add(komi, 1, 1);
         foreground.add(totalBlack, 0, 1);
         foreground.add(totalWhite, 1, 1);
-        foreground.add(new ImageView(new Image("file:..\\..\\Graphics\\TerritoryKey.png")), 0,2, 2, 1);
+        foreground.add(new ImageView(new Image(this.getClass().getResourceAsStream("/TerritoryKey.png"))), 0,2, 2, 1);
         foreground.add(buttons, 0, 3, 2,1);
 
         setupGridConstraints();

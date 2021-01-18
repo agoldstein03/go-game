@@ -2,7 +2,6 @@ package data.exceptions;
 
 import data.Game;
 import data.State;
-
 import java.util.ArrayList;
 
 public class KoException extends IllegalArgumentException {
