@@ -84,7 +84,7 @@ public class GameScreen extends GridPane {
 
         setRowColumnSizing();
 
-        header = new Label(state.currentPlayer.isBlack()? "BLACK turn":"WHITE turn");
+        header = new Label(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
         header.setTextAlignment(TextAlignment.CENTER);
         header.setFont(new Font(45));
         add(header, 0, 0, 3, 1);
@@ -177,7 +177,7 @@ public class GameScreen extends GridPane {
     }
 
     private void refreshBoard() {
-        header.setText(state.currentPlayer.isBlack()? "BLACK turn":"WHITE turn");
+        header.setText(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
         blackCap = state.blackCaptures;
         whiteCap = state.whiteCaptures;
 
@@ -284,10 +284,10 @@ public class GameScreen extends GridPane {
                     drawPiece(gc, true, i*spacing+offset-(spacing/2)+3, j*spacing+offset-(spacing/2)+3);
                 else {
                     gc.setFill(Color.BLACK);
-                    gc.fillRect(i*spacing+offset-(spacing/2)+3, j*spacing+offset-(spacing/2)+3, spacing-6, spacing-6);
+                    gc.fillRect(i*spacing+offset-spacing/4, j*spacing+offset-spacing/4, spacing/2, spacing/2);
                     if(cell!=ScoringBoardCell.BLACK_TERRITORY){
                         gc.setFill(cell==ScoringBoardCell.WHITE_TERRITORY ? Color.WHITE:Color.GRAY);
-                        gc.fillRect(i*spacing+offset-(spacing/2)+5, j*spacing+offset-(spacing/2)+5, spacing-10, spacing-10);
+                        gc.fillRect(i*spacing+offset-(spacing/4)+2, j*spacing+offset-(spacing/4)+2, spacing/2-4, spacing/2-4);
                     }
                 }
             }
