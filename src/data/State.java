@@ -264,8 +264,8 @@ public class State {
             this.neutralTerritory = neutralTerritory;
             this.whiteCaptures = whiteCaptures;
             this.blackCaptures = blackCaptures;
-            whiteScore = whiteTerritory + (neutralTerritory / 2) + whiteCaptures + game.komi;
-            blackScore = blackTerritory + (neutralTerritory / 2) + blackCaptures;
+            whiteScore = whiteTerritory + whiteCaptures + game.komi;
+            blackScore = blackTerritory + blackCaptures;
             didWhiteWin = whiteScore > blackScore;
             if (didWhiteWin) {
                 adjustedWhiteScore = whiteScore - blackScore;
