@@ -203,7 +203,7 @@ public class EndScreen extends StackPane {
         playAgain.setFont(scoringFont);
         playAgain.setPadding(new Insets(0, 69, 0,69));
         playAgain.setOnMouseClicked(event -> {
-            mainWindow.changeScreen(new GameScreen(mainWindow, game.whitePlayer, game.blackPlayer, game.size, game.komi, game.handicap));
+            mainWindow.changeScreen(new SetupScreen(mainWindow, game.blackPlayer instanceof ComputerPlayer || game.whitePlayer instanceof ComputerPlayer, game));
         });
 
         buttons.getColumnConstraints().addAll(new ColumnConstraints(400), new ColumnConstraints(400));

@@ -43,13 +43,14 @@ public class GameScreen extends GridPane {
     private State state;
     public Game game;
     private int size;
-    private int spacing;
+    private double spacing;
     private int offset;
     private int thickness;
     private int blackCap;
     private int whiteCap;
     private GridPane bottom;
     private GraphicsContext gc;
+    private boolean AIGame;
 
     private Label header;
     private Label blackCapLabel;
@@ -60,6 +61,7 @@ public class GameScreen extends GridPane {
         mainWindow = parent;
         game = new Game(whitePlayer, blackPlayer, size, komi, handicap);
         state= new State(game);
+        AIGame = game.blackPlayer instanceof ComputerPlayer || game.whitePlayer instanceof ComputerPlayer;
         this.size = size;
         if(size == 19){
             offset = 42;
@@ -67,16 +69,16 @@ public class GameScreen extends GridPane {
             thickness = 4;
         }
         else if(size == 13){
-            offset = 9;
-            spacing = 54;
+            offset = 9+9;
+            spacing = 54-(9/13);
             thickness = 6;
         }
         else { //9x9
-            offset = -5;
-            spacing = 80;
+            offset = -5+19;
+            spacing = 78;
             thickness = 8;
         }
-        offset = offset+spacing/2+thickness*2;
+        offset = (int) (offset+spacing/2+thickness*2);
 
         blackCap = state.blackCaptures;
         whiteCap = state.whiteCaptures;
@@ -84,7 +86,19 @@ public class GameScreen extends GridPane {
 
         setRowColumnSizing();
 
-        header = new Label(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
+        header = new Label();
+        if(AIGame){
+            if(state.currentPlayer instanceof ComputerPlayer){
+                header.setText("Computer turn");
+            } else{
+                if(game.blackPlayer instanceof ComputerPlayer)
+                    header.setText(state.blackPass ? "Your turn (computer passed)":"Your turn");
+                else
+                    header.setText(state.whitePass ? "Your turn (computer passed)":"Your turn");
+            }
+        }
+        else
+            header.setText(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
         header.setTextAlignment(TextAlignment.CENTER);
         header.setFont(new Font(45));
         add(header, 0, 0, 3, 1);
@@ -177,7 +191,18 @@ public class GameScreen extends GridPane {
     }
 
     private void refreshBoard() {
-        header.setText(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
+        if(AIGame){
+            if(state.currentPlayer instanceof ComputerPlayer){
+                header.setText("Computer turn");
+            } else{
+                if(game.blackPlayer instanceof ComputerPlayer)
+                    header.setText(state.blackPass ? "Your turn (computer passed)":"Your turn");
+                else
+                    header.setText(state.whitePass ? "Your turn (computer passed)":"Your turn");
+            }
+        }
+        else
+            header.setText(state.currentPlayer.isBlack()? "BLACK's turn":"WHITE's turn");
         blackCap = state.blackCaptures;
         whiteCap = state.whiteCaptures;
 

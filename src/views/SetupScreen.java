@@ -30,6 +30,11 @@ public class SetupScreen extends GridPane {
     private ComboBox boardSelector;
     private boolean vsAI;
     private MainWindow mainStage;
+    private TextField komiEntry;
+    private ToggleGroup playerColor;
+    private RadioButton playerBlack;
+    private RadioButton playerWhite;
+    public static final int[] boardSizeArray = new int[]{9,13,19};
 
     public SetupScreen(MainWindow parent, boolean AIGame){
         setBackground(TitleScreen.WOODBACKGROUND);
@@ -38,6 +43,25 @@ public class SetupScreen extends GridPane {
         //this.setGridLinesVisible(true);
         setupGridConstraints();
         setupGraphics();
+    }
+
+    public SetupScreen(MainWindow parent, boolean AIGame, Game presets){
+        this(parent, AIGame);
+        komiEntry.setText(String.valueOf(presets.komi));
+        handicapSelector.getSelectionModel().select(presets.handicap);
+
+        int boardSize = 2;
+        for(int i=0; i<3; i++){
+            if(boardSizeArray[i]==presets.size)
+                boardSize=i;
+        }
+
+        boardSelector.getSelectionModel().select(boardSize);
+
+        if(AIGame){
+            playerColor.selectToggle(presets.blackPlayer instanceof HumanPlayer ? playerBlack:playerWhite);
+        }
+
     }
 
     private void setupGraphics(){
@@ -75,7 +99,7 @@ public class SetupScreen extends GridPane {
         add(komi, 0, 5, 1, 2);
 
 
-        TextField komiEntry = new TextField();
+        komiEntry = new TextField();
         komiEntry.setPromptText("Enter a multiple of 0.5 (7.5 recommended)");
         komiEntry.setMaxWidth(300);
         komiEntry.setFont(pt15);
@@ -104,22 +128,20 @@ public class SetupScreen extends GridPane {
         Button start = new Button("Start");
         start.setFont(new Font(45));
 
-        RadioButton playerWhite = new RadioButton("White");
-
         if(vsAI){
             Label color = new Label("Color");
             color.setFont(new Font(60));
             color.setPadding(new Insets(0,0,0,256));
             add(color, 0,7);
 
-            ToggleGroup playerColor = new ToggleGroup();
+            playerColor = new ToggleGroup();
 
-            RadioButton playerBlack = new RadioButton("Black");
+            playerBlack = new RadioButton("Black");
             playerBlack.setFont(new Font(25));
             //playerBlack.setPadding(new Insets(30,0,0,0));
             playerBlack.setToggleGroup(playerColor);
 
-
+            playerWhite = new RadioButton("White");
             playerWhite.setFont(new Font(25));
             playerWhite.setPadding(new Insets(0,0,0,8));
             playerWhite.setToggleGroup(playerColor);
@@ -137,7 +159,6 @@ public class SetupScreen extends GridPane {
         }
 
         start.setOnMouseClicked(event -> {
-            int[] boardSizeArray = new int[]{9,13,19};
             GameScreen game;
             int size= boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()];
             double komiValue = komiEntry.getText().isEmpty() ? 0:Double.parseDouble(komiEntry.getText());
