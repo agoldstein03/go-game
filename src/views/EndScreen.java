@@ -15,19 +15,22 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.text.DecimalFormat;
+
 public class EndScreen extends StackPane {
 
     private MainWindow mainWindow;
     private Label winTitle;
     private Game game;
     private State finalState;
-    private float whiteScore;
-    private float blackScore;
+    private double whiteScore;
+    private double blackScore;
     public final Font scoringFont = new Font(45);
     public final int rightOffset = 50;
     private GridPane foreground = new GridPane();
     private GridPane buttons = new GridPane();
     private GameScreen background;
+    public final DecimalFormat df = new DecimalFormat("##0.0");
 
     public EndScreen(MainWindow parent, State finalState, Game game, GameScreen background){
         mainWindow = parent;
@@ -38,7 +41,7 @@ public class EndScreen extends StackPane {
 
         State.Scoring finalScore = finalState.new Scoring();
         blackScore = finalState.blackCaptures+finalScore.blackTerritory;
-        whiteScore = finalState.whiteCaptures+finalScore.whiteTerritory+(float) game.komi;
+        whiteScore = finalState.whiteCaptures+finalScore.whiteTerritory+ game.komi;
 
         Label blackCaps = new Label("Captures: " + finalScore.blackCaptures);
         blackCaps.setPadding(new Insets(0, rightOffset, 50, 0));
@@ -54,14 +57,14 @@ public class EndScreen extends StackPane {
         whiteTerr.setPadding(new Insets(0, rightOffset, 150, 0));
         formatScore(whiteTerr);
 
-        Label komi = new Label("Komi: " + game.komi);
+        Label komi = new Label("Komi: " + df.format(game.komi));
         komi.setPadding(new Insets(50, rightOffset, 0, 0));
         formatScore(komi);
 
-        Label totalBlack = new Label("Black total: " + blackScore);
+        Label totalBlack = new Label("Black total: " + df.format(blackScore));
         totalBlack.setPadding(new Insets(150, rightOffset, 0, 0));
         formatScore(totalBlack);
-        Label totalWhite = new Label("White total: " + whiteScore);
+        Label totalWhite = new Label("White total: " + df.format(whiteScore));
         totalWhite.setPadding(new Insets(150, rightOffset, 0, 0));
         formatScore(totalWhite);
 
@@ -160,6 +163,7 @@ public class EndScreen extends StackPane {
     private void formatScore(Label label){
         label.setTextAlignment(TextAlignment.RIGHT);
         label.setFont(scoringFont);
+        label.setTextFill(Color.BLACK);
     }
 
     private void setupGridConstraints() {
