@@ -360,15 +360,14 @@ public class State {
                 try {
                     stateWithSetPosition(pos);
                     actions.add(new PlaceStoneActionWithStates(this, new PlaceStoneAction(pos))); // Will not be reached if the placement is invalid
-                } catch (PlacementOutOfBoundsException | KoException | SelfCaptureException | PlacingEmptyException | OccupiedPlacementException exception) {}
+                } catch (PlacementOutOfBoundsException | KoException | SelfCaptureException | PlacingEmptyException | OccupiedPlacementException ignored) {}
             }
         }
         return actions;
     }
 
     public ArrayList<ActionWithStates> validActionsWithStates() {
-        ArrayList<ActionWithStates> actions = new ArrayList<ActionWithStates>();
-        actions.addAll(validPlacementActionsWithStates());
+        ArrayList<ActionWithStates> actions = new ArrayList<ActionWithStates>(validPlacementActionsWithStates());
         actions.add(new ActionWithStates(this, new PassAction()));
         return actions;
     }
