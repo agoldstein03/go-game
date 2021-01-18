@@ -6,10 +6,12 @@ import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
 import data.exceptions.PlacingEmptyException;
 import data.exceptions.SelfCaptureException;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -192,6 +194,9 @@ public class GameScreen extends GridPane {
         add(whiteCapLabel, 1, 2, 2, 1);
 
         Button resign = new Button("Resign");
+        resign.setOnMouseClicked(event -> {
+            mainWindow.changeScreen(new EndScreen(mainWindow, state.currentPlayer.isBlack() ? Stone.BLACK: Stone.WHITE, game, this));
+        });
         resign.setFont(new Font(20));
         add(resign, 0, 3);
 
@@ -207,11 +212,14 @@ public class GameScreen extends GridPane {
                     indicateInvalidMove(board.getGraphicsContext2D(), e);
                 }
             }
-            computerTurn();
+            if(game.isGameOver())
+                mainWindow.changeScreen(new EndScreen(mainWindow, state, game, this));
+            else
+                computerTurn();
         });
         add(pass, 2,3);
 
-        Button computeScore = new Button("Compute score");
+        /*Button computeScore = new Button("Compute score");
         computeScore.setOnMouseClicked(event -> {
             State.Scoring score = state.calculateScore();
             System.out.println("White territory " + score.whiteTerritory);
@@ -220,7 +228,7 @@ public class GameScreen extends GridPane {
             System.out.println("White score " + score.whiteScore);
             System.out.println("Black score " + score.blackScore);
         });
-        add(computeScore, 1, 3);
+        add(computeScore, 1, 3);*/
     }
 
     private void setRowColumnSizing() {
@@ -241,6 +249,17 @@ public class GameScreen extends GridPane {
             state = state.stateAfterAction(state.currentPlayer.chooseAction(state));
             game.states.add(state);
             refreshBoard();
+            if(game.isGameOver())
+                mainWindow.changeScreen(new EndScreen(mainWindow, state, game, this));
+        }
+    }
+
+    public void clean(){
+        ObservableList<Node> children = getChildren();
+        for(int i=children.size()-1; i>=0; i--){
+            if(!(children.get(i) instanceof Canvas)){
+                children.remove(i);
+            }
         }
     }
 }
