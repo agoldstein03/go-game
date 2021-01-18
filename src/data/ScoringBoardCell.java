@@ -1,0 +1,5 @@
+package data;
+
+public enum ScoringBoardCell {
+    NEUTRAL_TERRITORY, WHITE_TERRITORY, BLACK_TERRITORY, WHITE_STONE, BLACK_STONE
+}
