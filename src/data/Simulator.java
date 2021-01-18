@@ -25,13 +25,13 @@ public class Simulator {
         System.out.printf("%17s%3s%17s%n", "Black captures: ", "", "White captures: ");
         System.out.printf("%17d%3s%17d%n", score.blackCaptures, "   ", score.whiteCaptures);
         State lastState = game.states.get(game.states.size()-1);
-        System.out.println("Black: @\nWhite: |\nEmpty: -");
+        System.out.println("Black: |\nWhite: @\nEmpty: -");
         for(int i=0; i<game.size; i++){
             for(int j=0; j<game.size; j++){
                 if(lastState.getPosition(i, j).stone==Stone.BLACK)
-                    System.out.print("@ ");
+                    System.out.print("| ");
                 else
-                    System.out.print(lastState.getPosition(i, j).stone==Stone.WHITE ? "| ":"- ");
+                    System.out.print(lastState.getPosition(i, j).stone==Stone.WHITE ? "@ ":"- ");
             }
             System.out.print("\n");
         }
