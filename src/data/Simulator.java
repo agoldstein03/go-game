@@ -25,10 +25,7 @@ public class Simulator {
         System.out.printf("%17s%3s%17s%n", "Black captures: ", "", "White captures: ");
         System.out.printf("%17d%3s%17d%n", score.blackCaptures, "   ", score.whiteCaptures);
         State lastState = game.states.get(game.states.size()-1);
-
-
-
-
+        System.out.println("Black: @\nWhite: |\nEmpty: -");
         for(int i=0; i<game.size; i++){
             for(int j=0; j<game.size; j++){
                 if(lastState.getPosition(i, j).stone==Stone.BLACK)
@@ -72,4 +69,5 @@ public class Simulator {
         Game simGame = sim.simulate(maxTurns);
         sim.display(simGame, simGame.currentState().new Scoring());
     }
+
 }
