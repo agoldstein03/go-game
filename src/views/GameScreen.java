@@ -247,7 +247,7 @@ public class GameScreen extends GridPane {
         }
         getRowConstraints().get(2).setValignment(VPos.TOP);
 
-        getColumnConstraints().addAll(new ColumnConstraints(250), new ColumnConstraints(300), new ColumnConstraints(250));
+        getColumnConstraints().addAll(new ColumnConstraints(300), new ColumnConstraints(200), new ColumnConstraints(300));
         for(int i=0; i<3; i++){
             getColumnConstraints().get(i).setHalignment(HPos.CENTER);
         }
