@@ -11,7 +11,7 @@ public class SelfCaptureException extends IllegalArgumentException {
     private static Object HashSet;
 
     public SelfCaptureException(Position pos) {
-        super("A move of "+pos.toString()+" would cause a self-capture");
+        super("That move would cause an illegal self-capture.");
     }
 
     public static Group assertValid(Position pos, State state) throws SelfCaptureException {

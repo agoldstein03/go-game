@@ -3,7 +3,7 @@ package data.exceptions;
 public class PlacementOutOfBoundsException extends IllegalArgumentException {
 
     public PlacementOutOfBoundsException(String message) {
-        super(message);
+        super("That move is out of the bounds of the board."); // Ignoring actual message to provide user-friendly message
     }
 
     public static boolean isValid(int x, int y, int size) {

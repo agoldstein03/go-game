@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class KoException extends IllegalArgumentException {
 
     public KoException() {
-        super("New state would lead to Ko");
+        super("That move would violate the Ko rule.");
     }
 
     public static void assertValid(State state, Game game) throws KoException {
