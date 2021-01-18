@@ -102,6 +102,8 @@ public class EndScreen extends StackPane {
         }
 
         Label byResignation = new Label("by resignation");
+        byResignation.setPadding(new Insets(30, 0, 0, 0));
+        byResignation.setFont(scoringFont);
 
         setupButtons();
 
@@ -111,6 +113,13 @@ public class EndScreen extends StackPane {
         foreground.add(winTitle, 0, 0, 2, 1);
         foreground.add(byResignation, 0, 1, 2, 1);
         foreground.add(buttons, 0, 2, 2, 1);
+
+        foreground.getColumnConstraints().addAll(new ColumnConstraints(400), new ColumnConstraints(400));
+        foreground.getColumnConstraints().get(0).setHalignment(HPos.CENTER);
+        foreground.getColumnConstraints().get(1).setHalignment(HPos.CENTER);
+
+        foreground.getRowConstraints().addAll(new RowConstraints(80), new RowConstraints(705), new RowConstraints(67+48));
+        foreground.getRowConstraints().get(1).setValignment(VPos.TOP);
 
         background.clean();
         foreground.setBackground(new Background(new BackgroundFill(new Color(.6, .6, .6, .75), null, null)));
