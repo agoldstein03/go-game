@@ -2,8 +2,6 @@ package data.exceptions;
 
 import data.Game;
 import data.State;
-import views.GameScreen;
-import views.Main;
 
 import java.util.ArrayList;
 

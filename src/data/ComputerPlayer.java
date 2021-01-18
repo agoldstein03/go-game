@@ -16,7 +16,7 @@ public class ComputerPlayer extends Player {
 
     @Override
     public Action chooseAction(State state) {
-        return new RandomPlayer(black).chooseAction(state);
+        return new AlmostRandomPlayer(black).chooseAction(state);
     }
 
 }

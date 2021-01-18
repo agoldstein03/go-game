@@ -352,18 +352,24 @@ public class State {
 
     }
 
-    public ArrayList<Action> validActions() {
-        ArrayList<Action> actions = new ArrayList<Action>();
+    public ArrayList<PlaceStoneActionWithStates> validPlacementActionsWithStates() {
+        ArrayList<PlaceStoneActionWithStates> actions = new ArrayList<PlaceStoneActionWithStates>();
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 Position pos = new Position(x, y, currentPlayer.isBlack() ? Stone.BLACK : Stone.WHITE);
                 try {
                     stateWithSetPosition(pos);
-                    actions.add(new PlaceStoneAction(pos)); // Will not be reached if the placement is invalid
+                    actions.add(new PlaceStoneActionWithStates(this, new PlaceStoneAction(pos))); // Will not be reached if the placement is invalid
                 } catch (PlacementOutOfBoundsException | KoException | SelfCaptureException | PlacingEmptyException | OccupiedPlacementException exception) {}
             }
         }
-        actions.add(new PassAction());
+        return actions;
+    }
+
+    public ArrayList<ActionWithStates> validActionsWithStates() {
+        ArrayList<ActionWithStates> actions = new ArrayList<ActionWithStates>();
+        actions.addAll(validPlacementActionsWithStates());
+        actions.add(new ActionWithStates(this, new PassAction()));
         return actions;
     }
 

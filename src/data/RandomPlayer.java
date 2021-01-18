@@ -14,14 +14,18 @@ public class RandomPlayer extends Player {
 
     @Override
     public Action chooseAction(State state) {
-        ArrayList<Action> validActions = state.validActions();
+        ArrayList<ActionWithStates> validActions = state.validActionsWithStates();
         int size = validActions.size();
-        return validActions.get(rand.nextInt(size));
+        return selectRandom(validActions).action;
     }
 
     @Override
     public boolean isBlack() {
         return black;
+    }
+
+    private <T> T selectRandom(ArrayList<T> list) {
+        return list.get(rand.nextInt(list.size()));
     }
 
 }
