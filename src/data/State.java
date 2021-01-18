@@ -2,6 +2,7 @@ package data;
 
 import data.exceptions.*;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 public class State {
 
-    public final Game game;
+    public final WeakReference<Game> game;
     public final int size;
     private final Position[][] board;
     public final Player currentPlayer;
@@ -27,7 +28,7 @@ public class State {
     }
 
     private State(Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
-        this.game = game;
+        this.game = new WeakReference<Game>(game);
         this.size = game.size;
         this.board = new Position[size][size];
         this.currentPlayer = currentPlayer;
@@ -59,7 +60,11 @@ public class State {
     }
 
     public State(State oldBoard, boolean advanceTurn, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass) {
-        this(oldBoard, advanceTurn ? (oldBoard.game.whitePlayer == oldBoard.currentPlayer ? oldBoard.game.blackPlayer : oldBoard.game.whitePlayer) : oldBoard.currentPlayer,
+        this(oldBoard, advanceTurn ?
+                        (Objects.requireNonNull(oldBoard.game.get()).whitePlayer == oldBoard.currentPlayer
+                                ? Objects.requireNonNull(oldBoard.game.get()).blackPlayer :
+                                Objects.requireNonNull(oldBoard.game.get()).whitePlayer)
+                        : oldBoard.currentPlayer,
                 whiteCaptures, blackCaptures, whitePass, blackPass);
     }
 
@@ -68,7 +73,7 @@ public class State {
     }
 
     public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
-        this(oldBoard.game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
+        this(oldBoard.game.get(), currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 board[x][y] = oldBoard.getPosition(x, y);
@@ -120,7 +125,7 @@ public class State {
         }
 
         SelfCaptureException.assertValid(pos, newState); //, processedPositions //, stone == Stone.WHITE ? whiteProcessedPositions : blackProcessedPositions);
-        KoException.assertValid(newState, game);
+        KoException.assertValid(newState, Objects.requireNonNull(game.get()));
 
         return newState;
     }
@@ -245,7 +250,7 @@ public class State {
 
         public final State finalState = State.this;
         public final State scoringState = new State(finalState); // This will have "dead" groups removed
-        public final Game game = scoringState.game;
+        public final Game game = Objects.requireNonNull(scoringState.game.get());
 
         public final ScoringBoardCell[][] scoringBoard = new ScoringBoardCell[scoringState.size][scoringState.size];
 
