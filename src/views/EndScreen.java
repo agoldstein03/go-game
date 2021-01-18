@@ -37,7 +37,7 @@ public class EndScreen extends StackPane {
         blackScore = finalState.blackCaptures+finalScore.blackTerritory;
         whiteScore = finalState.whiteCaptures+finalScore.whiteTerritory+(float) game.komi;
 
-        Label blackCaps = new Label("Captures " + finalScore.blackCaptures);
+        Label blackCaps = new Label("Captures: " + finalScore.blackCaptures);
         blackCaps.setPadding(new Insets(0, rightOffset, 50, 0));
         formatScore(blackCaps);
         Label whiteCaps = new Label("Captures: " + finalScore.whiteCaptures);

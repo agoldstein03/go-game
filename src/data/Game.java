@@ -36,15 +36,8 @@ public class Game {
     }
 
     public boolean isGameOver(){
-        int size = states.size();
-        if(size>=2){
-            State lastTurn = states.get(size-1);
-            State secondLast = states.get(size-2);
-            if((lastTurn.blackPass||lastTurn.whitePass)&&(secondLast.blackPass||secondLast.whitePass)){
-                return true;
-            }
-        }
-        return false;
+        State lastState = states.get(states.size()-1);
+        return lastState.blackPass&&lastState.whitePass;
     }
 
 }
