@@ -35,9 +35,18 @@ public class Game {
         this.handicap = handicap;
     }
 
+    public Game(Game game) {
+        this(game.whitePlayer, game.blackPlayer, game.size, game.komi, game.handicap);
+        this.states.addAll(game.states);
+    }
+
+    public State currentState() {
+        return states.get(states.size() - 1);
+    }
+
     public boolean isGameOver(){
-        State lastState = states.get(states.size()-1);
-        return lastState.blackPass&&lastState.whitePass;
+        State currentState = currentState();
+        return currentState().blackPass && currentState.whitePass;
     }
 
 }
