@@ -241,91 +241,115 @@ public class State {
         }
     }
 
-    // TODO: I don't know exactly how these 6 should relate nor which will be needed, but we'll see
-
-
     public class Scoring {
 
+        public final State finalState = State.this;
+        public final State scoringState = new State(finalState); // This will have "dead" groups removed
+        public final Game game = scoringState.game;
+
+        public final ScoringBoardCell[][] scoringBoard = new ScoringBoardCell[scoringState.size][scoringState.size];
+
+        public final int whiteStones;
+        public final int blackStones;
         public final int whiteTerritory;
         public final int blackTerritory;
         public final int neutralTerritory;
         public final int whiteCaptures;
         public final int blackCaptures;
+
         public final double whiteScore;
         public final double blackScore;
+
         public final boolean didWhiteWin;
         public final double adjustedWhiteScore;
         public final double adjustedBlackScore;
         public final Stone winningStone;
         public final Player winningPlayer;
 
-        public Scoring(int whiteTerritory, int blackTerritory, int neutralTerritory, int whiteCaptures, int blackCaptures) {
+
+        public Scoring() {
+
+            int whiteStones = 0;
+            int blackStones = 0;
+            int whiteTerritory = 0;
+            int blackTerritory = 0;
+            int neutralTerritory = 0;
+            int whiteCaptures = scoringState.whiteCaptures;
+            int blackCaptures = scoringState.blackCaptures;
+
+            ArrayList<Group> groups = scoringState.findAllGroups();
+            for (Group group: groups) {
+                if (!group.isAlive()) {
+                    int area = group.size();
+                    if (group.stone == Stone.WHITE) {
+                        blackCaptures += area;
+                    } else {
+                        whiteCaptures += area;
+                    }
+                    scoringState.removeGroup(group);
+                }
+            }
+
+            HashSet<Position> processedPositions = new HashSet<Position>();
+            for (int x = 0; x < size; x++) {
+                for (int y = 0; y < size; y++) {
+                    Position pos = scoringState.getPosition(x, y);
+                    if (pos.stone == Stone.WHITE) {
+                        whiteStones++;
+                        scoringBoard[x][y] = ScoringBoardCell.WHITE_STONE;
+                    } else if (pos.stone == Stone.BLACK) {
+                        blackStones++;
+                        scoringBoard[x][y] = ScoringBoardCell.BLACK_STONE;
+                    } else if (!processedPositions.contains(pos)) {
+                        TerritoryArea territoryArea = new TerritoryArea(pos, scoringState);
+                        processedPositions.addAll(territoryArea);
+
+                        int area = territoryArea.size();
+                        ScoringBoardCell territoryType;
+                        if (territoryArea.isWhite()) {
+                            whiteTerritory += area;
+                            territoryType = ScoringBoardCell.WHITE_TERRITORY;
+                        } else if (territoryArea.isBlack()) {
+                            blackTerritory += area;
+                            territoryType = ScoringBoardCell.BLACK_TERRITORY;
+                        } else {
+                            neutralTerritory += area;
+                            territoryType = ScoringBoardCell.NEUTRAL_TERRITORY;
+                        }
+
+                        for (Position position : territoryArea) {
+                            scoringBoard[position.x][position.y] = territoryType;
+                        }
+                    }
+                }
+            }
+
+            this.whiteStones = whiteStones;
+            this.blackStones = blackStones;
             this.whiteTerritory = whiteTerritory;
             this.blackTerritory = blackTerritory;
             this.neutralTerritory = neutralTerritory;
             this.whiteCaptures = whiteCaptures;
             this.blackCaptures = blackCaptures;
-            whiteScore = whiteTerritory + whiteCaptures + game.komi;
-            blackScore = blackTerritory + blackCaptures;
-            didWhiteWin = whiteScore > blackScore;
+
+            this.whiteScore = this.whiteTerritory + this.whiteCaptures + game.komi;
+            this.blackScore = this.blackTerritory + this.blackCaptures;
+
+            this.didWhiteWin = whiteScore > blackScore;
             if (didWhiteWin) {
-                adjustedWhiteScore = whiteScore - blackScore;
-                adjustedBlackScore = 0;
-                winningStone = Stone.WHITE;
-                winningPlayer = game.whitePlayer;
+                this.adjustedWhiteScore = whiteScore - blackScore;
+                this.adjustedBlackScore = 0;
+                this.winningStone = Stone.WHITE;
+                this.winningPlayer = game.whitePlayer;
             } else {
-                adjustedWhiteScore = 0;
-                adjustedBlackScore = blackScore - whiteScore;
-                winningStone = Stone.BLACK;
-                winningPlayer = game.blackPlayer;
+                this.adjustedWhiteScore = 0;
+                this.adjustedBlackScore = blackScore - whiteScore;
+                this.winningStone = Stone.BLACK;
+                this.winningPlayer = game.blackPlayer;
             }
 
         }
 
-    }
-
-    public Scoring calculateScore() {
-        State state = new State(this);
-
-        ArrayList<Group> groups = findAllGroups();
-        int newWhiteCaptures = 0;
-        int newBlackCaptures = 0;
-        for (Group group: groups) {
-            if (!group.isAlive()) {
-                int area = group.size();
-                if (group.stone == Stone.WHITE) {
-                    newBlackCaptures += area;
-                } else {
-                    newWhiteCaptures += area;
-                }
-                state.removeGroup(group);
-            }
-        }
-
-        int whiteArea = 0;
-        int blackArea = 0;
-        int neutralArea = 0;
-        HashSet<Position> processedPositions = new HashSet<Position>();
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                Position pos = board[x][y];
-                if (pos.stone == Stone.EMPTY && !processedPositions.contains(pos)) {
-                    TerritoryArea territoryArea = new TerritoryArea(pos, this);
-                    processedPositions.addAll(territoryArea);
-
-                    int area = territoryArea.size();
-                    if (territoryArea.isWhite()) {
-                        whiteArea += area;
-                    } else if (territoryArea.isBlack()) {
-                        blackArea += area;
-                    } else {
-                        neutralArea += area;
-                    }
-                }
-            }
-        }
-
-        return new Scoring(whiteArea, blackArea, neutralArea, whiteCaptures + newWhiteCaptures, blackCaptures + newBlackCaptures);
     }
 
     public ArrayList<Action> validActions() {

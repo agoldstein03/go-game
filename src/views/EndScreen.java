@@ -33,7 +33,7 @@ public class EndScreen extends StackPane {
 
         //setBackground(TitleScreen.WOODBACKGROUND);
 
-        State.Scoring finalScore = finalState.calculateScore();
+        State.Scoring finalScore = finalState.new Scoring();
         blackScore = finalState.blackCaptures+finalScore.blackTerritory;
         whiteScore = finalState.whiteCaptures+finalScore.whiteTerritory+(float) game.komi;
 
