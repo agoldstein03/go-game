@@ -182,9 +182,6 @@ public class SetupScreen extends GridPane {
         for(Node node : this.getChildren()){
             node.setStyle(node.getStyle()+"-fx-faint-focus-color: transparent;" + "-fx-focus-color: transparent;");
         }
-
-
-
     }
 
     private void setupGridConstraints(){

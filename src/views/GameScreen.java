@@ -63,20 +63,25 @@ public class GameScreen extends GridPane {
         state= new State(game);
         AIGame = game.blackPlayer instanceof ComputerPlayer || game.whitePlayer instanceof ComputerPlayer;
         this.size = size;
+
+        Position[] handicapPosition;
         if(size == 19){
             offset = 42;
             spacing = 34;
             thickness = 4;
+            handicapPosition = Game.handicap19Positions;
         }
         else if(size == 13){
             offset = 9+9;
             spacing = 54-(9/13);
             thickness = 6;
+            handicapPosition = Game.handicap13Positions;
         }
         else { //9x9
             offset = -5+19;
             spacing = 78;
             thickness = 8;
+            handicapPosition = Game.handicap9Positions;
         }
         offset = (int) (offset+spacing/2+thickness*2);
 
@@ -136,8 +141,7 @@ public class GameScreen extends GridPane {
 
         if(handicap>0){
             for(int i=0; i<handicap; i++){
-                if(size==19)
-                        state = state.stateWithSetPosition(Game.handicap19Positions[i], false);
+                state = state.stateWithSetPosition(handicapPosition[i], false);
                 refreshBoard();
             }
             if(state.currentPlayer instanceof ComputerPlayer){

@@ -11,9 +11,16 @@ public class Game {
     public final double komi;
     public final int handicap;
     public final ArrayList<State> states = new ArrayList<State>();
-    public static final Position[] handicap19Positions = new Position[]{new Position(15, 3, Stone.BLACK), new Position(3, 15, Stone.BLACK), new Position(15, 15, Stone.BLACK),
-    new Position(3, 3, Stone.BLACK), new Position(9,9, Stone.BLACK), new Position(3,  9, Stone.BLACK),
-    new Position(15, 9, Stone.BLACK), new Position(9, 3, Stone.BLACK), new Position(9, 15, Stone.BLACK)};
+    public static final Position[] handicap19Positions = new Position[]{new Position(3, 3, Stone.BLACK), new Position(15, 15, Stone.BLACK), new Position(15, 3, Stone.BLACK),
+            new Position(3, 15, Stone.BLACK), new Position(9,9, Stone.BLACK), new Position(9,  3, Stone.BLACK),
+            new Position(9, 15, Stone.BLACK), new Position(3, 9, Stone.BLACK), new Position(15, 9, Stone.BLACK)};
+                                                                        //3, 6, 9
+    public static final Position[] handicap13Positions = new Position[]{new Position(3, 3, Stone.BLACK), new Position(9, 9, Stone.BLACK), new Position(9, 3, Stone.BLACK),
+            new Position(3, 9, Stone.BLACK), new Position(6,6, Stone.BLACK), new Position(6,  3, Stone.BLACK),
+            new Position(6, 9, Stone.BLACK), new Position(3, 6, Stone.BLACK), new Position(9, 6, Stone.BLACK)};
+    public static final Position[] handicap9Positions = new Position[]{new Position(2, 2, Stone.BLACK), new Position(6, 6, Stone.BLACK), new Position(6, 2, Stone.BLACK),
+            new Position(2, 6, Stone.BLACK), new Position(4,4, Stone.BLACK), new Position(4,  2, Stone.BLACK),
+            new Position(4, 6, Stone.BLACK), new Position(2, 4, Stone.BLACK), new Position(6, 4, Stone.BLACK)};
 
     public Game(Player whitePlayer, Player blackPlayer) {
         this(whitePlayer, blackPlayer, 19);
