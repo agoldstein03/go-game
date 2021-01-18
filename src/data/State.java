@@ -136,6 +136,7 @@ public class State {
                 if (group.stone != stone && group.countLiberties() == 0) {
                     int area = group.size();
                     this.removeGroup(group);
+                    captured += area;
                 }
             }
         }
