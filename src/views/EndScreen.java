@@ -4,9 +4,12 @@ import com.sun.rowset.internal.Row;
 import data.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -76,17 +79,19 @@ public class EndScreen extends StackPane {
         foreground.add(komi, 1, 1);
         foreground.add(totalBlack, 0, 1);
         foreground.add(totalWhite, 1, 1);
-        foreground.add(buttons, 0, 2, 2,1);
+        foreground.add(new ImageView(new Image("file:..\\..\\Graphics\\TerritoryKey.png")), 0,2, 2, 1);
+        foreground.add(buttons, 0, 3, 2,1);
 
         setupGridConstraints();
 
         foreground.setBackground(new Background(new BackgroundFill(new Color(.6, .6, .6, .75), null, null)));
         this.getChildren().addAll(background,foreground);
-        background.clean();
+        background.clean(finalScore);
     }
 
     public EndScreen(MainWindow parent, Stone resigned, Game game, GameScreen background){
         mainWindow = parent;
+        this.game = game;
 
         if(game.blackPlayer instanceof ComputerPlayer || game.whitePlayer instanceof ComputerPlayer){
             winTitle = new Label("You lose.");
@@ -153,10 +158,11 @@ public class EndScreen extends StackPane {
         foreground.getColumnConstraints().get(0).setHalignment(HPos.RIGHT);
         foreground.getColumnConstraints().get(1).setHalignment(HPos.RIGHT);
 
-        foreground.getRowConstraints().addAll(new RowConstraints(95), new RowConstraints(665), new RowConstraints(140));
-        foreground.getRowConstraints().get(0).setValignment(VPos.CENTER);
+        foreground.getRowConstraints().addAll(new RowConstraints(80), new RowConstraints(705), new RowConstraints(48), new RowConstraints(67));
+        foreground.getRowConstraints().get(0).setValignment(VPos.TOP);
         foreground.getRowConstraints().get(1).setValignment(VPos.CENTER);
         foreground.getRowConstraints().get(2).setValignment(VPos.CENTER);
+        foreground.getRowConstraints().get(3).setValignment(VPos.BOTTOM);
     }
 
     private void padTitle(){

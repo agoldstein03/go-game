@@ -49,6 +49,7 @@ public class GameScreen extends GridPane {
     private int blackCap;
     private int whiteCap;
     private GridPane bottom;
+    private GraphicsContext gc;
 
     private Label header;
     private Label blackCapLabel;
@@ -143,7 +144,7 @@ public class GameScreen extends GridPane {
     }
 
     private void drawBoard(){
-        GraphicsContext gc = board.getGraphicsContext2D();
+        gc = board.getGraphicsContext2D();
         gc.clearRect(0,0,board.getWidth(), board.getHeight());
         gc.setFill(Color.BLACK);
         gc.setStroke(Color.BLACK);
@@ -259,6 +260,28 @@ public class GameScreen extends GridPane {
         for(int i=children.size()-1; i>=0; i--){
             if(!(children.get(i) instanceof Canvas)){
                 children.remove(i);
+            }
+        }
+    }
+
+    public void clean(State.Scoring scoring){
+        clean();
+        ScoringBoardCell[][] finalBoard = scoring.scoringBoard;
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                ScoringBoardCell cell = finalBoard[i][j];
+                if(cell==ScoringBoardCell.BLACK_STONE)
+                    drawPiece(gc, false, i*spacing+offset-(spacing/2)+3, j*spacing+offset-(spacing/2)+3);
+                else if(cell==ScoringBoardCell.WHITE_STONE)
+                    drawPiece(gc, true, i*spacing+offset-(spacing/2)+3, j*spacing+offset-(spacing/2)+3);
+                else {
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(i*spacing+offset-(spacing/2)+3, j*spacing+offset-(spacing/2)+3, spacing-6, spacing-6);
+                    if(cell!=ScoringBoardCell.BLACK_TERRITORY){
+                        gc.setFill(cell==ScoringBoardCell.WHITE_TERRITORY ? Color.WHITE:Color.GRAY);
+                        gc.fillRect(i*spacing+offset-(spacing/2)+5, j*spacing+offset-(spacing/2)+5, spacing-10, spacing-10);
+                    }
+                }
             }
         }
     }
