@@ -14,10 +14,10 @@ public class AlmostRandomPlayer extends RandomPlayer {
     @Override
     public Action chooseAction(State currentState) {
         ArrayList<PlaceStoneActionWithStates> validActions = currentState.validPlacementActionsWithStates();
-        PlaceStoneAction action;
-        boolean validAction;
+        PlaceStoneAction action = null;
+        boolean validAction = false;
 
-        do {
+        while (!(validAction || validActions.isEmpty())) {
             int index = selectRandomIndex(validActions);
             PlaceStoneActionWithStates randomActionWithStates = validActions.get(index);
             action = randomActionWithStates.action;
@@ -26,9 +26,9 @@ public class AlmostRandomPlayer extends RandomPlayer {
             if (!validAction) {
                 validActions.remove(index);
             }
-        } while (!(validAction || validActions.isEmpty()));
+        }
 
-        return validActions.isEmpty() ? new PassAction() : action;
+        return action == null || validActions.isEmpty() ? new PassAction() : action;
     }
 
     private int selectRandomIndex(ArrayList<?> list) {
