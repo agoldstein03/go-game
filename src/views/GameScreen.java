@@ -1,24 +1,14 @@
 package views;
 
-import com.sun.rowset.internal.Row;
 import data.*;
-import data.exceptions.KoException;
-import data.exceptions.PlacementOutOfBoundsException;
-import data.exceptions.PlacingEmptyException;
-import data.exceptions.SelfCaptureException;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -26,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
