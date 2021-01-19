@@ -1,10 +1,8 @@
 package views;
 
-import com.sun.rowset.internal.Row;
 import data.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
