@@ -6,6 +6,7 @@ import data.exceptions.KoException;
 import data.exceptions.PlacementOutOfBoundsException;
 import data.exceptions.PlacingEmptyException;
 import data.exceptions.SelfCaptureException;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -283,13 +284,16 @@ public class GameScreen extends GridPane {
     }
 
     private void computerTurn(){
-        if(state.currentPlayer instanceof ComputerPlayer){
-            state = state.stateAfterAction(state.currentPlayer.chooseAction(state));
-            game.states.add(state);
-            refreshBoard();
-            if(game.isGameOver())
-                mainWindow.changeScreen(new EndScreen(mainWindow, state, game, this));
-        }
+        refreshBoard();
+        Platform.runLater(() -> {
+            if(state.currentPlayer instanceof ComputerPlayer){
+                state = state.stateAfterAction(state.currentPlayer.chooseAction(state));
+                game.states.add(state);
+                refreshBoard();
+                if(game.isGameOver())
+                    mainWindow.changeScreen(new EndScreen(mainWindow, state, game, this));
+            }
+        });
     }
 
     public void clean(){

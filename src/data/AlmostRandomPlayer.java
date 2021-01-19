@@ -13,13 +13,13 @@ public class AlmostRandomPlayer extends RandomPlayer {
 
     @Override
     public Action chooseAction(State currentState) {
-        ArrayList<PlaceStoneActionWithStates> validActions = currentState.validPlacementActionsWithStates();
+        ArrayList<ActionWithStates<PlaceStoneAction>> validActions = currentState.validPlacementActionsWithStates();
         PlaceStoneAction action = null;
         boolean validAction = false;
 
         while (!(validAction || validActions.isEmpty())) {
             int index = selectRandomIndex(validActions);
-            PlaceStoneActionWithStates randomActionWithStates = validActions.get(index);
+            ActionWithStates<PlaceStoneAction> randomActionWithStates = validActions.get(index);
             action = randomActionWithStates.action;
             State stateAfter = randomActionWithStates.stateAfter;
             validAction = new Group(action.position, stateAfter).isAlive();

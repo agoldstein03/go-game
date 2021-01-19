@@ -169,10 +169,10 @@ public class SetupScreen extends GridPane {
                 //game = new Game(PlayerType.HUMAN, PlayerType.HUMAN, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
             } else{
                 if(playerWhite.isSelected()){
-                    game = new GameScreen(mainStage, new HumanPlayer(false), new ComputerPlayer(true), size, komiValue, handicapValue);
+                    game = new GameScreen(mainStage, new HumanPlayer(false), new ComputerPlayer(true, size), size, komiValue, handicapValue);
                     //game = new Game(PlayerType.COMPUTER, PlayerType.HUMAN, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
                 } else{
-                    game = new GameScreen(mainStage, new ComputerPlayer(false), new HumanPlayer(true), size, komiValue, handicapValue);
+                    game = new GameScreen(mainStage, new ComputerPlayer(false, size), new HumanPlayer(true), size, komiValue, handicapValue);
                     //game = new Game(PlayerType.HUMAN, PlayerType.COMPUTER, boardSizeArray[boardSelector.getSelectionModel().getSelectedIndex()], Double.parseDouble(komiEntry.getText()), handicapSelector.getSelectionModel().getSelectedIndex());
                 }
             }

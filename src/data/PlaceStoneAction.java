@@ -2,7 +2,9 @@ package data;
 
 import data.exceptions.*;
 
-public class PlaceStoneAction implements Action {
+import java.util.Objects;
+
+public class PlaceStoneAction extends Action {
 
     public final Position position;
 
@@ -22,6 +24,21 @@ public class PlaceStoneAction implements Action {
     @Override
     public String toString() {
         return "Placing: "+position.toString();
+    }
+
+    /* Modified from auto-generated equals/hashCode by IntelliJ IDEA */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlaceStoneAction that = (PlaceStoneAction) o;
+        return position.equals(that.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return position.hashCode();
     }
 
 }

@@ -1,14 +1,13 @@
 package data;
 
 import data.exceptions.*;
+import io.github.nejc92.mcts.MctsDomainState;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class State {
+public class State implements MctsDomainState<Action, Player> {
 
     public final WeakReference<Game> game;
     public final int size;
@@ -18,6 +17,8 @@ public class State {
     public final int blackCaptures;
     public final boolean whitePass;
     public final boolean blackPass;
+
+    private Game strongGameReference;
 
     public State(Game game) {
         this(game, game.firstTurn, 0, 0, false, false);
@@ -36,6 +37,7 @@ public class State {
         this.blackCaptures = blackCaptures;
         this.whitePass = whitePass;
         this.blackPass = blackPass;
+        this.strongGameReference = game;
         if (initToEmpty) {
             for (int x = 0; x < size; x++) {
                 for (int y = 0; y < size; y++) {
@@ -44,8 +46,6 @@ public class State {
             }
         }
     }
-
-    // TODO: Need to verify that passes are reset correctly after a placement is made;
 
     public State(State oldBoard) {
         this(oldBoard, false);
@@ -73,7 +73,15 @@ public class State {
     }
 
     public State(State oldBoard, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
-        this(oldBoard.game.get(), currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
+        this(oldBoard, oldBoard.game.get(), currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
+    }
+
+    public State(State oldBoard, Game game) {
+        this(oldBoard, game, oldBoard.currentPlayer, oldBoard.whiteCaptures, oldBoard.blackCaptures, oldBoard.whitePass, oldBoard.blackPass, false);
+    }
+
+    public State(State oldBoard, Game game, Player currentPlayer, int whiteCaptures, int blackCaptures, boolean whitePass, boolean blackPass, boolean initToEmpty) {
+        this(game, currentPlayer, whiteCaptures, blackCaptures, whitePass, blackPass, initToEmpty);
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 board[x][y] = oldBoard.getPosition(x, y);
@@ -357,14 +365,14 @@ public class State {
 
     }
 
-    public ArrayList<PlaceStoneActionWithStates> validPlacementActionsWithStates() {
-        ArrayList<PlaceStoneActionWithStates> actions = new ArrayList<PlaceStoneActionWithStates>();
+    public ArrayList<ActionWithStates<PlaceStoneAction>> validPlacementActionsWithStates() {
+        ArrayList<ActionWithStates<PlaceStoneAction>> actions = new ArrayList<ActionWithStates<PlaceStoneAction>>();
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 Position pos = new Position(x, y, currentPlayer.isBlack() ? Stone.BLACK : Stone.WHITE);
                 try {
                     stateWithSetPosition(pos);
-                    actions.add(new PlaceStoneActionWithStates(this, new PlaceStoneAction(pos))); // Will not be reached if the placement is invalid
+                    actions.add(new ActionWithStates<PlaceStoneAction>(this, new PlaceStoneAction(pos))); // Will not be reached if the placement is invalid
                 } catch (PlacementOutOfBoundsException | KoException | SelfCaptureException | PlacingEmptyException | OccupiedPlacementException ignored) {}
             }
         }
@@ -373,9 +381,54 @@ public class State {
 
     public ArrayList<ActionWithStates> validActionsWithStates() {
         ArrayList<ActionWithStates> actions = new ArrayList<ActionWithStates>(validPlacementActionsWithStates());
-        actions.add(new ActionWithStates(this, new PassAction()));
+        actions.add(new ActionWithStates<Action>(this, new PassAction()));
         return actions;
     }
+
+    // Allows garbage collection
+    public void discardGame() {
+        strongGameReference = null;
+    }
+
+
+    @Override
+    public boolean isTerminal() {
+        return Objects.requireNonNull(game.get()).isGameOver();
+    }
+
+    @Override
+    public Player getCurrentAgent() {
+        return currentPlayer;
+    }
+
+    @Override
+    public Player getPreviousAgent() {
+        Game game = Objects.requireNonNull(this.game.get());
+        return currentPlayer == game.whitePlayer ? game.blackPlayer : game.whitePlayer;
+    }
+
+    @Override
+    public int getNumberOfAvailableActionsForCurrentAgent() {
+        return getAvailableActionsForCurrentAgent().size();
+    }
+
+    @Override
+    public List<Action> getAvailableActionsForCurrentAgent() {
+        return validActionsWithStates().stream().map(actionWithStates -> actionWithStates.action).collect(Collectors.toList());
+    }
+
+    @Override
+    public MctsDomainState performActionForCurrentAgent(Action action) {
+        return action.stateAfterAction(this);
+    }
+
+    @Override
+    public MctsDomainState skipCurrentAgent() {
+        return new State(this, true);
+    }
+
+
+
 
     /* Auto-generated equals/hashCode by IntelliJ IDEA */
 

@@ -43,8 +43,14 @@ public class Game {
     }
 
     public Game(Game game) {
-        this(game.whitePlayer, game.blackPlayer, game.size, game.komi, game.handicap);
-        this.states.addAll(game.states);
+        this(game, game.whitePlayer, game.blackPlayer);
+    }
+
+    public Game(Game game, Player whitePlayer, Player blackPlayer) {
+        this(whitePlayer, blackPlayer, game.size, game.komi, game.handicap);
+        for (State state : game.states) {
+            this.states.add(new State(state, this));
+        }
     }
 
     public State currentState() {

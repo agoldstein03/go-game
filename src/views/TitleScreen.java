@@ -48,7 +48,7 @@ public class TitleScreen extends GridPane {
         mainTitle.setAlignment(Pos.CENTER);
         this.add(mainTitle, 1, 0);
 
-        Label chineseTitle = new Label("\n\n\n围棋");
+        Label chineseTitle = new Label("\n\n\n\u56F4\u68CB");
         chineseTitle.setFont(new Font(60));
         chineseTitle.setTextFill(Color.WHITE);
         chineseTitle.setAlignment(Pos.CENTER);

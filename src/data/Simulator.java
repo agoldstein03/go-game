@@ -2,20 +2,29 @@ package data;
 
 public class Simulator {
 
-    public static final int DEFAULT_MAX_TURNS = 1000;
+    //public static final int DEFAULT_MAX_TURNS = 100;//1000;//
 
     public final Game game;
     public final Player whitePlayer;
     public final Player blackPlayer;
-
+    public final int defaultMaxTurns;
+    /*
     public Simulator(Game game) {
         this(game, new AlmostRandomPlayer(false), new AlmostRandomPlayer(true));
     }
-
-    public Simulator(Game game, Player whitePlayer, Player blackPlayer) {
+     */
+    public Simulator(Game game) {
         this.game = game;
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
+        this.whitePlayer = game.whitePlayer;
+        this.blackPlayer = game.blackPlayer;
+        int size = game.size;
+        if (size > 16) {
+            defaultMaxTurns = 50;
+        } else if (size > 12){
+            defaultMaxTurns = 75;
+        } else {
+            defaultMaxTurns = 100;
+        }
     }
 
     public void display(Game game, State.Scoring score){
@@ -24,6 +33,8 @@ public class Simulator {
         System.out.printf("%17d%3s%17d%n", score.blackTerritory, "   ", score.whiteTerritory);
         System.out.printf("%17s%3s%17s%n", "Black captures: ", "", "White captures: ");
         System.out.printf("%17d%3s%17d%n", score.blackCaptures, "   ", score.whiteCaptures);
+        System.out.printf("%17s%3s%17s%n", "Black score: ", "", "White score: ");
+        System.out.printf("%17f%3s%17f%n", score.blackScore, "   ", score.whiteScore);
         State lastState = game.states.get(game.states.size()-1);
         System.out.println("Black: |\nWhite: @\nEmpty: -");
         for(int i=0; i<game.size; i++){
@@ -38,7 +49,7 @@ public class Simulator {
     }
 
     public Game simulate() {
-        return simulate(DEFAULT_MAX_TURNS);
+        return simulate(defaultMaxTurns);
     }
 
     public Game simulate(int maxTurns) {
@@ -53,7 +64,7 @@ public class Simulator {
     }
 
     public State.Scoring simulateAndScore() {
-        return simulateAndScore(DEFAULT_MAX_TURNS);
+        return simulateAndScore(defaultMaxTurns);
     }
 
     public State.Scoring simulateAndScore(int maxTurns) {
@@ -62,9 +73,9 @@ public class Simulator {
 
     public static void main(String[] args){
         int size = 19;
-        Player blackPlayer = new AlmostRandomPlayer(true);
-        Player whitePlayer = new AlmostRandomPlayer(false);
-        int maxTurns = DEFAULT_MAX_TURNS;
+        Player blackPlayer = new RandomPlayer(true); //new AlmostRandomPlayer(true);//
+        Player whitePlayer = new RandomPlayer(false);//new AlmostRandomPlayer(false);//
+        int maxTurns = 100;
         Simulator sim = new Simulator(new Game(blackPlayer, whitePlayer, size));
         Game simGame = sim.simulate(maxTurns);
         sim.display(simGame, simGame.currentState().new Scoring());
